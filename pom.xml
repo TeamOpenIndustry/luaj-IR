@@ -4,12 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.luaj</groupId>
-	<artifactId>luaj-parent</artifactId>
+	<artifactId>luaj</artifactId>
 	<version>3.0-SNAPSHOT</version>
 
-	<packaging>pom</packaging>
+	<packaging>jar</packaging>
 
-	<name>luaj-parent</name>
+	<name>luaj</name>
 	<description>Lua VM for Java</description>
 	<url>http://sourceforge.net/projects/luaj/</url>
 
@@ -42,13 +42,6 @@
 		<url>http://luaj.cvs.sourceforge.net/viewvc/luaj/luaj-vm/</url>
 	</scm>
 
-	<modules>
-		<module>luaj-core</module>
-		<module>luaj-jse</module>
-		<module>luaj-jme</module>
-		<module>luaj-test</module>
-	</modules>
-
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.target>8</maven.compiler.target>
@@ -77,6 +70,30 @@
 		</dependencies>
 	</dependencyManagement>
 
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.bcel</groupId>
+			<artifactId>bcel</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.microemu</groupId>
+			<artifactId>microemulator</artifactId>
+			<version>2.0.4</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.microemu</groupId>
+			<artifactId>microemu-jsr-75</artifactId>
+			<version>2.0.4</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -103,6 +120,44 @@
 			</plugins>
 		</pluginManagement>
 		<plugins>
+			<plugin>
+				<groupId>com.helger.maven</groupId>
+				<artifactId>ph-javacc-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>generate-grammar</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>javacc</goal>
+						</goals>
+						<configuration>
+							<jdkVersion>1.8</jdkVersion>
+							<javadocFriendlyComments>true</javadocFriendlyComments>
+							<packageName>org.luaj.vm2.parser</packageName>
+							<sourceDirectory>src/main/javacc</sourceDirectory>
+							<outputDirectory>${project.build.directory}/generated-sources/javacc</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>${project.build.directory}/generated-sources/javacc</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>

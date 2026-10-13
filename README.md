@@ -834,19 +834,11 @@ See the <a href="http://luaj.org/luaj/3.0/api/org/luaj/vm2/ast/package-summary.h
 The main jar files are now deployed in the maven central repository.  To use them in your maven-based project, list them as a dependency:
 
 <p>
-For JSE projects, add this dependency for the luaj-jse jar:
+Add the unified luaj dependency:
 <pre>
    &lt;dependency&gt;
       &lt;groupId&gt;org.luaj&lt;/groupId&gt;
-      &lt;artifactId&gt;luaj-jse&lt;/artifactId&gt;
-      &lt;version&gt;3.0.2&lt;/version&gt;
-   &lt;/dependency&gt;	
-</pre>
-while for JME projects, use the luaj-jme jar:
-<pre>
-   &lt;dependency&gt;
-      &lt;groupId&gt;org.luaj&lt;/groupId&gt;
-      &lt;artifactId&gt;luaj-jme&lt;/artifactId&gt;
+      &lt;artifactId&gt;luaj&lt;/artifactId&gt;
       &lt;version&gt;3.0.2&lt;/version&gt;
    &lt;/dependency&gt;	
 </pre>
@@ -873,14 +865,14 @@ All unit tests are executed during the build.
 <p>
 Test scripts can be found in these locations
 <pre>
-	luaj-test/src/test/resources
+	src/test/resources
 </pre>
-Executon is included in the build of luaj-test.
+Execution is included in the build.
 
 <h2>Code coverage</h2>
 
 <p>
-The maven build creates the coverage report in the luaj-test/target/site folder
+The maven build creates the coverage report in the target/site folder
 during the verify phase.
 
 <h1>8 - <a name="8">Downloads</a></h1>
