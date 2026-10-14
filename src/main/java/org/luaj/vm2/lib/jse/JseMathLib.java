@@ -30,7 +30,6 @@ import org.luaj.vm2.lib.TwoArgFunction;
  * Subclass of {@link LibFunction} which implements the lua standard
  * {@code math} library.
  * <p>
- * It contains all lua math functions, including those not available on the JME
  * platform. See {@link org.luaj.vm2.lib.MathLib} for the exception list.
  * <p>
  * Typically, this library is included as part of a call to
@@ -67,7 +66,6 @@ import org.luaj.vm2.lib.TwoArgFunction;
  *
  * @see LibFunction
  * @see org.luaj.vm2.lib.jse.JsePlatform
- * @see org.luaj.vm2.lib.jme.JmePlatform
  * @see org.luaj.vm2.lib.jse.JseMathLib
  * @see <a href="http://www.lua.org/manual/5.2/manual.html#6.6">Lua 5.2 Math Lib
  *      Reference</a>
@@ -83,7 +81,6 @@ public class JseMathLib extends org.luaj.vm2.lib.MathLib {
 	 * the return value.
 	 * <P>
 	 * Specifically, adds all library functions that can be implemented directly
-	 * in JSE but not JME: acos, asin, atan, atan2, cosh, exp, log, pow, sinh,
 	 * and tanh.
 	 *
 	 * @param modname the module name supplied if this is loaded via 'require'.

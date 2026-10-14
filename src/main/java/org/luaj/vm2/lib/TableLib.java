@@ -32,7 +32,6 @@ import org.luaj.vm2.Varargs;
  * <p>
  * Typically, this library is included as part of a call to either
  * {@link org.luaj.vm2.lib.jse.JsePlatform#standardGlobals()} or
- * {@link org.luaj.vm2.lib.jme.JmePlatform#standardGlobals()}
  *
  * <pre>
  * {
@@ -61,7 +60,6 @@ import org.luaj.vm2.Varargs;
  *
  * @see LibFunction
  * @see org.luaj.vm2.lib.jse.JsePlatform
- * @see org.luaj.vm2.lib.jme.JmePlatform
  * @see <a href="http://www.lua.org/manual/5.2/manual.html#6.5">Lua 5.2 Table
  *      Lib Reference</a>
  */

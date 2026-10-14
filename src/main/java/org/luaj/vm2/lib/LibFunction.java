@@ -29,7 +29,6 @@ import org.luaj.vm2.Varargs;
 /**
  * Subclass of {@link LuaFunction} common to Java functions exposed to lua.
  * <p>
- * To provide for common implementations in JME and JSE, library functions are
  * typically grouped on one or more library classes and an opcode per library
  * function is defined and used to key the switch to the correct function within
  * the library.

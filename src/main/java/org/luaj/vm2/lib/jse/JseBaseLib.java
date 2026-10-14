@@ -38,7 +38,6 @@ import org.luaj.vm2.lib.ResourceFinder;
  * basic library functions and provides a directory based {@link ResourceFinder}
  * as the {@link Globals#finder}.
  * <p>
- * Since JME has no file system by default, {@link BaseLib} implements
  * {@link ResourceFinder} using {@link Class#getResource(String)}. The
  * {@link org.luaj.vm2.lib.jse.JseBaseLib} implements {@link Globals#finder} by
  * scanning the current directory first, then falling back to
@@ -80,7 +79,6 @@ import org.luaj.vm2.lib.ResourceFinder;
  * @see Globals#finder
  * @see LibFunction
  * @see org.luaj.vm2.lib.jse.JsePlatform
- * @see org.luaj.vm2.lib.jme.JmePlatform
  * @see <a href="http://www.lua.org/manual/5.2/manual.html#6.1">Lua 5.2 Base Lib
  *      Reference</a>
  */

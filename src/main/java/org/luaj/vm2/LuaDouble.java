@@ -389,7 +389,7 @@ public class LuaDouble extends LuaNumber {
 
 	@Override
 	public String tojstring() {
-		if ( v == 0.0 ) // never occurs on J2ME
+		if ( v == 0.0 )
 			return (JavaCompat.INSTANCE.doubleToRawLongBits(v)<0? "-0": "0");
 		long l = (long) v;
 		if (l == v)

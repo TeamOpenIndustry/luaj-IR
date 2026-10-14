@@ -50,7 +50,6 @@ import org.luaj.vm2.lib.BaseLib;
  * <p>
  * The {@link LuaC} compiler is installed by default by both the
  * {@link org.luaj.vm2.lib.jse.JsePlatform} and
- * {@link org.luaj.vm2.lib.jme.JmePlatform} classes, so in the following
  * example, the default {@link LuaC} compiler will be used:
  *
  * <pre>
@@ -74,7 +73,6 @@ import org.luaj.vm2.lib.BaseLib;
  * @see Globals#loader
  * @see org.luaj.vm2.luajc.LuaJC
  * @see org.luaj.vm2.lib.jse.JsePlatform
- * @see org.luaj.vm2.lib.jme.JmePlatform
  * @see BaseLib
  * @see LuaValue
  * @see Prototype

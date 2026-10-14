@@ -38,7 +38,6 @@ import org.luaj.vm2.LuaValue;
 /**
  * LuaValue that represents a Java class.
  * <p>
- * Will respond to get() and set() by returning field values, or java methods.
  * <p>
  * This class is not used directly. It is returned by calls to
  * {@link CoerceJavaToLua#coerce(Object)} when a Class is supplied.

@@ -33,7 +33,6 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 
 /**
- * LuaValue that represents a Java method.
  * <p>
  * Can be invoked via call(LuaValue...) and related methods.
  * <p>
@@ -107,7 +106,6 @@ class JavaMethod extends JavaMember {
 	}
 
 	/**
-	 * LuaValue that represents an overloaded Java method.
 	 * <p>
 	 * On invocation, will pick the best method from the list, and invoke it.
 	 * <p>

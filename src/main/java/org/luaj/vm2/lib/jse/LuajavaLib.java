@@ -77,7 +77,6 @@ import org.luaj.vm2.lib.VarArgFunction;
  * The {@code luajava} library is available on all JSE platforms via the call to
  * {@link org.luaj.vm2.lib.jse.JsePlatform#standardGlobals()} and the luajava
  * api's are simply invoked from lua. Because it makes extensive use of Java's
- * reflection API, it is not available on JME, but can be used in Android
  * applications.
  * <p>
  * This has been implemented to match as closely as possible the behavior in the
@@ -85,7 +84,6 @@ import org.luaj.vm2.lib.VarArgFunction;
  *
  * @see LibFunction
  * @see org.luaj.vm2.lib.jse.JsePlatform
- * @see org.luaj.vm2.lib.jme.JmePlatform
  * @see LuaC
  * @see CoerceJavaToLua
  * @see CoerceLuaToJava

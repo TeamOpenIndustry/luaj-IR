@@ -49,7 +49,6 @@ import java.io.InputStream;
  * {@link Globals.Undumper} have been installed.
  * <p>
  * By default, when using {@link org.luaj.vm2.lib.jse.JsePlatform} or
- * {@link org.luaj.vm2.lib.jme.JmePlatform} to construct globals, the
  * {@link LoadState} default undumper is installed as the default
  * {@link Globals.Undumper}.
  * <p>
@@ -98,7 +97,7 @@ import java.io.InputStream;
  * @see org.luaj.vm2.compiler.LuaC
  * @see org.luaj.vm2.luajc.LuaJC
  * @see Globals#compiler
- * @see Globals#load(InputStream, String, LuaValue)
+ * @see Globals#load(InputStream, String, String, LuaValue)
  */
 public class LoadState {
 

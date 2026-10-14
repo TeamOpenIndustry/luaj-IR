@@ -40,7 +40,6 @@ import org.luaj.vm2.lib.ResourceFinder;
  * <h3>Constructing and Initializing Instances</h3> Typically, this is
  * constructed indirectly by a call to
  * {@link org.luaj.vm2.lib.jse.JsePlatform#standardGlobals()} or
- * {@link org.luaj.vm2.lib.jme.JmePlatform#standardGlobals()}, and then used to
  * load lua scripts for execution as in the following example.
  *
  * <pre>
@@ -110,7 +109,6 @@ import org.luaj.vm2.lib.ResourceFinder;
  *
  * <h3>Lua Environment Variables</h3> When using
  * {@link org.luaj.vm2.lib.jse.JsePlatform} or
- * {@link org.luaj.vm2.lib.jme.JmePlatform}, these environment variables are
  * created within the Globals.
  * <ul>
  * <li>"_G" Pointer to this Globals.
@@ -124,7 +122,6 @@ import org.luaj.vm2.lib.ResourceFinder;
  * <p>
  *
  * @see org.luaj.vm2.lib.jse.JsePlatform
- * @see org.luaj.vm2.lib.jme.JmePlatform
  * @see LuaValue
  * @see Compiler
  * @see Loader
@@ -401,7 +398,6 @@ public class Globals extends LuaTable {
 		return s.lua_yield(args);
 	}
 
-	/** Reader implementation to read chars from a String in JME or JSE. */
 	static class StrReader extends Reader {
 		final String s;
 		int          i = 0;
@@ -481,7 +477,6 @@ public class Globals extends LuaTable {
 
 	/**
 	 * Simple converter from Reader to InputStream using UTF8 encoding that will
-	 * work on both JME and JSE. This class may be moved to its own package in
 	 * the future.
 	 */
 	static class UTF8Stream extends AbstractBufferedStream {

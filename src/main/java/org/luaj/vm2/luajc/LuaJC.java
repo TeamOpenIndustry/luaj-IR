@@ -38,7 +38,6 @@ import org.luaj.vm2.compiler.LuaC;
  * lua-to-java-bytecode compiling.
  * <p>
  * By default, when using {@link org.luaj.vm2.lib.jse.JsePlatform} or
- * {@link org.luaj.vm2.lib.jme.JmePlatform} to construct globals, the plain
  * compiler {@link LuaC} is installed and lua code will only be compiled into
  * lua bytecode and execute as {@link LuaClosure}.
  * <p>

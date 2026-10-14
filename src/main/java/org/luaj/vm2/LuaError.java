@@ -31,7 +31,6 @@ import java.io.File;
  * within a script.
  * <p>
  * Since it is an unchecked exception inheriting from {@link RuntimeException},
- * Java method signatures do notdeclare this exception, althoug it can be thrown
  * on almost any luaj Java operation. This is analagous to the fact that any lua
  * script can throw a lua error at any time.
  * <p>

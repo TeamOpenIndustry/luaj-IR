@@ -55,7 +55,6 @@ import org.luaj.vm2.Varargs;
  *
  * <h3>Loading</h3> Typically, this library is included as part of a call to
  * either {@link org.luaj.vm2.lib.jse.JsePlatform#standardGlobals()} or
- * {@link org.luaj.vm2.lib.jme.JmePlatform#standardGlobals()}
  *
  * <pre>
  *  {@code
@@ -88,7 +87,6 @@ import org.luaj.vm2.Varargs;
  * @see BaseLib
  * @see org.luaj.vm2.lib.jse.JseBaseLib
  * @see org.luaj.vm2.lib.jse.JsePlatform
- * @see org.luaj.vm2.lib.jme.JmePlatform
  * @see <a href="http://www.lua.org/manual/5.2/manual.html#6.3">Lua 5.2 Package
  *      Lib Reference</a>
  */
@@ -132,7 +130,6 @@ public class PackageLib extends TwoArgFunction {
 
 	/**
 	 * Loader that loads as a lua script using the lua path currently in
-	 * {@link path}
 	 */
 	public lua_searcher lua_searcher;
 

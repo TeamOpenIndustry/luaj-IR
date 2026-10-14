@@ -26,7 +26,6 @@ import org.luaj.vm2.lib.VarArgFunction;
 import org.luaj.vm2.lib.jse.CoerceLuaToJava.Coercion;
 
 /**
- * Java method or constructor.
  * <p>
  * Primarily handles argument coercion for parameter lists including scoring of
  * compatibility and java varargs handling.

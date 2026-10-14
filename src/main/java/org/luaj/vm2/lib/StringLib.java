@@ -38,7 +38,6 @@ import org.luaj.vm2.compiler.DumpState;
  * <p>
  * Typically, this library is included as part of a call to either
  * {@link org.luaj.vm2.lib.jse.JsePlatform#standardGlobals()} or
- * {@link org.luaj.vm2.lib.jme.JmePlatform#standardGlobals()}
  *
  * <pre>
  * {
@@ -66,7 +65,6 @@ import org.luaj.vm2.compiler.DumpState;
  *
  * @see LibFunction
  * @see org.luaj.vm2.lib.jse.JsePlatform
- * @see org.luaj.vm2.lib.jme.JmePlatform
  * @see <a href="http://www.lua.org/manual/5.2/manual.html#6.4">Lua 5.2 String
  *      Lib Reference</a>
  */
@@ -132,8 +130,6 @@ public class StringLib extends TwoArgFunction {
 	 * s[j]. The default value for i is 1; the default value for j is i.
 	 *
 	 * Note that numerical codes are not necessarily portable across platforms.
-	 *
-	 * @param args the calling args
 	 */
 	static final class _byte extends VarArgFunction {
 		@Override
@@ -167,8 +163,6 @@ public class StringLib extends TwoArgFunction {
 	 * code equal to its corresponding argument.
 	 *
 	 * Note that numerical codes are not necessarily portable across platforms.
-	 *
-	 * @param args the calling VM
 	 */
 	static final class _char extends VarArgFunction {
 		@Override

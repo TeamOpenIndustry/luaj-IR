@@ -36,7 +36,6 @@ import java.lang.ref.WeakReference;
  * {@link #LuaThread(Globals, LuaValue)}.
  * <p>
  * The utility classes {@link org.luaj.vm2.lib.jse.JsePlatform} and
- * {@link org.luaj.vm2.lib.jme.JmePlatform} see to it that this {@link Globals}
  * are initialized properly.
  * <p>
  * The behavior of coroutine threads matches closely the behavior of C coroutine
@@ -60,7 +59,6 @@ import java.lang.ref.WeakReference;
  *
  * @see LuaValue
  * @see org.luaj.vm2.lib.jse.JsePlatform
- * @see org.luaj.vm2.lib.jme.JmePlatform
  * @see org.luaj.vm2.lib.CoroutineLib
  */
 public class LuaThread extends LuaValue {

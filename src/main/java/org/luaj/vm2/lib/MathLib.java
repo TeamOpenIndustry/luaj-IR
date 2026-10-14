@@ -32,7 +32,6 @@ import org.luaj.vm2.Varargs;
  * Subclass of {@link LibFunction} which implements the lua standard
  * {@code math} library.
  * <p>
- * It contains only the math library support that is possible on JME. For a more
  * complete implementation based on math functions specific to JSE use
  * {@link org.luaj.vm2.lib.jse.JseMathLib}. In Particular the following math
  * functions are <b>not</b> implemented by this library:
@@ -48,12 +47,10 @@ import org.luaj.vm2.Varargs;
  * </ul>
  * <p>
  * The implementations of {@code exp()} and {@code pow()} are constructed by
- * hand for JME, so will be slower and less accurate than when executed on the
  * JSE platform.
  * <p>
  * Typically, this library is included as part of a call to either
  * {@link org.luaj.vm2.lib.jse.JsePlatform#standardGlobals()} or
- * {@link org.luaj.vm2.lib.jme.JmePlatform#standardGlobals()}
  *
  * <pre>
  * {
@@ -89,7 +86,6 @@ import org.luaj.vm2.Varargs;
  *
  * @see LibFunction
  * @see org.luaj.vm2.lib.jse.JsePlatform
- * @see org.luaj.vm2.lib.jme.JmePlatform
  * @see org.luaj.vm2.lib.jse.JseMathLib
  * @see <a href="http://www.lua.org/manual/5.2/manual.html#6.6">Lua 5.2 Math Lib
  *      Reference</a>
@@ -372,7 +368,6 @@ public class MathLib extends TwoArgFunction {
 	}
 
 	/**
-	 * Default JME version computes using longhand heuristics.
 	 */
 	protected static double dpow_default(double a, double b) {
 		if (b < 0)

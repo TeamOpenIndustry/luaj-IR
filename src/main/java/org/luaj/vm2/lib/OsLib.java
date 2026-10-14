@@ -36,7 +36,6 @@ import org.luaj.vm2.Varargs;
  * library.
  * <p>
  * It is a usable base with simplified stub functions for library functions that
- * cannot be implemented uniformly on Jse and Jme.
  * <p>
  * This can be installed as-is on either platform, or extended and refined to be
  * used in a complete Jse implementation.
@@ -46,7 +45,6 @@ import org.luaj.vm2.Varargs;
  * counterparts in the C platform.
  * <p>
  * The following functions have limited implementations of features that are not
- * supported well on Jme:
  * <ul>
  * <li>{@code execute()}</li>
  * <li>{@code remove()}</li>
@@ -56,7 +54,6 @@ import org.luaj.vm2.Varargs;
  * <p>
  * Typically, this library is included as part of a call to either
  * {@link org.luaj.vm2.lib.jse.JsePlatform#standardGlobals()} or
- * {@link org.luaj.vm2.lib.jme.JmePlatform#standardGlobals()}
  *
  * <pre>
  * {
@@ -88,7 +85,6 @@ import org.luaj.vm2.Varargs;
  * @see LibFunction
  * @see org.luaj.vm2.lib.jse.JseOsLib
  * @see org.luaj.vm2.lib.jse.JsePlatform
- * @see org.luaj.vm2.lib.jme.JmePlatform
  * @see <a href=
  *      "http://www.lua.org/manual/5.1/manual.html#5.8">http://www.lua.org/manual/5.1/manual.html#5.8</a>
  */
@@ -408,7 +404,6 @@ public class OsLib extends TwoArgFunction {
 	 * System property value for varname, or null if the variable is not defined
 	 * in either environment.
 	 *
-	 * The default implementation, which is used by the JmePlatform, only
 	 * queryies System.getProperty().
 	 *
 	 * The JsePlatform overrides this behavior and returns the environment

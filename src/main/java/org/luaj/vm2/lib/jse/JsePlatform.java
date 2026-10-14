@@ -95,7 +95,6 @@ import org.luaj.vm2.lib.TableLib;
  * The class ensures that initialization is done in the correct order.
  *
  * @see Globals
- * @see org.luaj.vm2.lib.jme.JmePlatform
  */
 public class JsePlatform {
 
@@ -105,7 +104,6 @@ public class JsePlatform {
 	 * @return Table of globals initialized with the standard JSE libraries
 	 * @see #debugGlobals()
 	 * @see org.luaj.vm2.lib.jse.JsePlatform
-	 * @see org.luaj.vm2.lib.jme.JmePlatform
 	 */
 	public static Globals standardGlobals() {
 		Globals globals = new Globals();
@@ -131,7 +129,6 @@ public class JsePlatform {
 	 *         libraries
 	 * @see #standardGlobals()
 	 * @see org.luaj.vm2.lib.jse.JsePlatform
-	 * @see org.luaj.vm2.lib.jme.JmePlatform
 	 * @see DebugLib
 	 */
 	public static Globals debugGlobals() {
