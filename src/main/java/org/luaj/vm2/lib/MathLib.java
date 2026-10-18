@@ -1,27 +1,29 @@
 /*******************************************************************************
-* Copyright (c) 2009 Luaj.org. All rights reserved.
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-******************************************************************************/
+ * Copyright (c) 2009 Luaj.org. All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ ******************************************************************************/
 package org.luaj.vm2.lib;
 
 import java.util.Random;
+
+import static org.luaj.vm2.LuaValue.*;
 
 import org.luaj.vm2.LuaDouble;
 import org.luaj.vm2.LuaTable;
@@ -59,7 +61,7 @@ import org.luaj.vm2.Varargs;
  * 	System.out.println(globals.get("math").get("sqrt").call(LuaValue.valueOf(2)));
  * }
  * </pre>
- *
+ * <p>
  * When using {@link org.luaj.vm2.lib.jse.JsePlatform} as in this example, the
  * subclass {@link org.luaj.vm2.lib.jse.JseMathLib} will be included, which also
  * includes this base functionality.
@@ -77,7 +79,7 @@ import org.luaj.vm2.Varargs;
  * 	System.out.println(globals.get("math").get("sqrt").call(LuaValue.valueOf(2)));
  * }
  * </pre>
- *
+ * <p>
  * Doing so will ensure the library is properly initialized and loaded into the
  * globals table.
  * <p>
@@ -88,304 +90,222 @@ import org.luaj.vm2.Varargs;
  * @see org.luaj.vm2.lib.jse.JsePlatform
  * @see org.luaj.vm2.lib.jse.JseMathLib
  * @see <a href="http://www.lua.org/manual/5.2/manual.html#6.6">Lua 5.2 Math Lib
- *      Reference</a>
+ * Reference</a>
  */
-public class MathLib extends TwoArgFunction {
+public class MathLib implements LuaModule {
 
-	/**
-	 * Pointer to the latest MathLib instance, used only to dispatch math.exp to
-	 * tha correct platform math library.
-	 */
-	public static MathLib MATHLIB = null;
+    @Override
+    public void init(LuaTable self, LuaValue name, LuaValue env) {
+    }
 
-	/**
-	 * Construct a MathLib, which can be initialized by calling it with a
-	 * modname string, and a global environment table as arguments using
-	 * {@link #call(LuaValue, LuaValue)}.
-	 */
-	public MathLib() {
-		MATHLIB = this;
-	}
+    @Override
+    public String name() {
+        return "math";
+    }
 
-	/**
-	 * Perform one-time initialization on the library by creating a table
-	 * containing the library functions, adding that table to the supplied
-	 * environment, adding the table to package.loaded, and returning table as
-	 * the return value.
-	 *
-	 * @param modname the module name supplied if this is loaded via 'require'.
-	 * @param env     the environment to load into, typically a Globals
-	 *                instance.
-	 */
-	@Override
-	public LuaValue call(LuaValue modname, LuaValue env) {
-		LuaTable math = new LuaTable(0, 30);
-		math.set("abs", new abs());
-		math.set("ceil", new ceil());
-		math.set("cos", new cos());
-		math.set("deg", new deg());
-		math.set("exp", new exp(this));
-		math.set("floor", new floor());
-		math.set("fmod", new fmod());
-		math.set("frexp", new frexp());
-		math.set("huge", LuaDouble.POSINF);
-		math.set("ldexp", new ldexp());
-		math.set("max", new max());
-		math.set("min", new min());
-		math.set("modf", new modf());
-		math.set("pi", Math.PI);
-		math.set("pow", new pow());
-		random r;
-		math.set("random", r = new random());
-		math.set("randomseed", new randomseed(r));
-		math.set("rad", new rad());
-		math.set("sin", new sin());
-		math.set("sqrt", new sqrt());
-		math.set("tan", new tan());
-		env.set("math", math);
-		if (!env.get("package").isnil())
-			env.get("package").get("loaded").set("math", math);
-		return math;
-	}
+    /**
+     * Pointer to the latest MathLib instance, used only to dispatch math.exp to
+     * tha correct platform math library.
+     */
+    public static MathLib MATHLIB = null;
+    private Random random = new Random();
 
-	abstract protected static class UnaryOp extends OneArgFunction {
-		@Override
-		public LuaValue call(LuaValue arg) {
-			return valueOf(call(arg.checkdouble()));
-		}
+    /**
+     * Construct a MathLib, which can be initialized by calling it with a
+     * modname string, and a global environment table as arguments using
+     * {@link #call(LuaValue, LuaValue)}.
+     */
+    public MathLib() {
+        MATHLIB = this;
+    }
 
-		abstract protected double call(double d);
-	}
+    /**
+     * Perform one-time initialization on the library by creating a table
+     * containing the library functions, adding that table to the supplied
+     * environment, adding the table to package.loaded, and returning table as
+     * the return value.
+     *
+     * @param modname the module name supplied if this is loaded via 'require'.
+     * @param env     the environment to load into, typically a Globals
+     *                instance.
+     */
+    // Annotation-bound module exports.
+    @LuaFunction
+    public Varargs abs(Varargs args) {
+        return valueOf(Math.abs(args.checkdouble(1)));
+    }
 
-	abstract protected static class BinaryOp extends TwoArgFunction {
-		@Override
-		public LuaValue call(LuaValue x, LuaValue y) {
-			return valueOf(call(x.checkdouble(), y.checkdouble()));
-		}
+    @LuaFunction
+    public Varargs ceil(Varargs args) {
+        return valueOf(Math.ceil(args.checkdouble(1)));
+    }
 
-		abstract protected double call(double x, double y);
-	}
+    @LuaFunction
+    public Varargs cos(Varargs args) {
+        return valueOf(Math.cos(args.checkdouble(1)));
+    }
 
-	static final class abs extends UnaryOp {
-		@Override
-		protected double call(double d) { return Math.abs(d); }
-	}
+    @LuaFunction
+    public Varargs deg(Varargs args) {
+        return valueOf(Math.toDegrees(args.checkdouble(1)));
+    }
 
-	static final class ceil extends UnaryOp {
-		@Override
-		protected double call(double d) { return Math.ceil(d); }
-	}
+    @LuaFunction
+    public Varargs exp(Varargs args) {
+        return valueOf(dpow_lib(Math.E, args.checkdouble(1)));
+    }
 
-	static final class cos extends UnaryOp {
-		@Override
-		protected double call(double d) { return Math.cos(d); }
-	}
+    @LuaFunction
+    public Varargs floor(Varargs args) {
+        return valueOf(Math.floor(args.checkdouble(1)));
+    }
 
-	static final class deg extends UnaryOp {
-		@Override
-		protected double call(double d) { return Math.toDegrees(d); }
-	}
+    @LuaFunction
+    public Varargs fmod(Varargs args) {
+        double x = args.checkdouble(1), y = args.checkdouble(2);
+        return valueOf(y == 0 ? Double.NaN : x % y);
+    }
 
-	static final class floor extends UnaryOp {
-		@Override
-		protected double call(double d) { return Math.floor(d); }
-	}
+    @LuaFunction
+    public Varargs frexp(Varargs args) {
+        double x = args.checkdouble(1);
+        if (x == 0)
+            return varargsOf(ZERO, ZERO);
+        long bits = Double.doubleToLongBits(x);
+        double m = ((bits & ~(-1L << 52)) + (1L << 52)) * (bits >= 0 ? .5 / (1L << 52) : -.5 / (1L << 52));
+        double e = ((int) (bits >> 52) & 0x7ff) - 1022;
+        return varargsOf(valueOf(m), valueOf(e));
+    }
 
-	static final class rad extends UnaryOp {
-		@Override
-		protected double call(double d) { return Math.toRadians(d); }
-	}
+    @LuaFunction
+    public Varargs ldexp(Varargs args) {
+        return valueOf(args.checkdouble(1) * Math.pow(2, args.checkdouble(2)));
+    }
 
-	static final class sin extends UnaryOp {
-		@Override
-		protected double call(double d) { return Math.sin(d); }
-	}
+    @LuaFunction
+    public Varargs max(Varargs args) {
+        LuaValue m = args.checknumber(1);
+        for (int i = 2, n = args.narg(); i <= n; ++i) {
+            LuaValue v = args.checknumber(i);
+            if (m.lt_b(v))
+                m = v;
+        }
+        return m;
+    }
 
-	static final class sqrt extends UnaryOp {
-		@Override
-		protected double call(double d) { return Math.sqrt(d); }
-	}
+    @LuaFunction
+    public Varargs min(Varargs args) {
+        LuaValue m = args.checknumber(1);
+        for (int i = 2, n = args.narg(); i <= n; ++i) {
+            LuaValue v = args.checknumber(i);
+            if (v.lt_b(m))
+                m = v;
+        }
+        return m;
+    }
 
-	static final class tan extends UnaryOp {
-		@Override
-		protected double call(double d) { return Math.tan(d); }
-	}
+    @LuaFunction
+    public Varargs modf(Varargs args) {
+        LuaValue n = args.arg1();
+        /* number is its own integer part, no fractional part */
+        if (n.islong())
+            return varargsOf(n.tonumber(), valueOf(0.0));
+        double x = n.checkdouble();
+        /* integer part (rounds toward zero) */
+        double intPart = x > 0 ? Math.floor(x) : Math.ceil(x);
+        /* fractional part (test needed for inf/-inf) */
+        double fracPart = x == intPart ? 0.0 : x - intPart;
+        return varargsOf(valueOf(intPart), valueOf(fracPart));
+    }
 
-	static final class exp extends UnaryOp {
-		final MathLib mathlib;
+    @LuaFunction
+    public Varargs pow(Varargs args) {
+        return valueOf(dpow_d(args.checkdouble(1), args.checkdouble(2)));
+    }
 
-		exp(MathLib mathlib) {
-			this.mathlib = mathlib;
-		}
+    @LuaFunction
+    public Varargs random(Varargs args) {
+        switch (args.narg()) {
+            case 0:
+                return valueOf(random.nextDouble());
+            case 1:
+                int upper = args.checkint(1);
+                if (upper < 1) argerror(1, "interval is empty");
+                return valueOf(1 + random.nextInt(upper));
+            default:
+                int lower = args.checkint(1);
+                int upperBound = args.checkint(2);
+                if (upperBound < lower) argerror(2, "interval is empty");
+                return valueOf(lower + random.nextInt(upperBound + 1 - lower));
+        }
+    }
 
-		@Override
-		protected double call(double d) {
-			return mathlib.dpow_lib(Math.E, d);
-		}
-	}
+    @LuaFunction
+    public Varargs randomseed(Varargs args) {
+        random = new Random(args.checklong(1));
+        return NONE;
+    }
 
-	static final class fmod extends TwoArgFunction {
-		@Override
-		public LuaValue call(LuaValue xv, LuaValue yv) {
-			if (yv.checkdouble() == 0.0d)
-				return LuaDouble.NAN;
-			if (xv.islong() && yv.islong()) {
-				return valueOf(xv.tolong()%yv.tolong());
-			}
-			return valueOf(xv.checkdouble()%yv.checkdouble());
-		}
-	}
+    @LuaFunction
+    public Varargs rad(Varargs args) {
+        return valueOf(Math.toRadians(args.checkdouble(1)));
+    }
 
-	static final class ldexp extends BinaryOp {
-		@Override
-		protected double call(double x, double y) {
-			// This is the behavior on os-x, windows differs in rounding behavior.
-			return x*Double.longBitsToDouble((long) y+1023<<52);
-		}
-	}
+    @LuaFunction
+    public Varargs sin(Varargs args) {
+        return valueOf(Math.sin(args.checkdouble(1)));
+    }
 
-	static final class pow extends BinaryOp {
-		@Override
-		protected double call(double x, double y) {
-			return MathLib.dpow_default(x, y);
-		}
-	}
+    @LuaFunction
+    public Varargs sqrt(Varargs args) {
+        return valueOf(Math.sqrt(args.checkdouble(1)));
+    }
 
-	static class frexp extends VarArgFunction {
-		@Override
-		public Varargs invoke(Varargs args) {
-			double x = args.checkdouble(1);
-			if (x == 0)
-				return varargsOf(ZERO, ZERO);
-			long bits = Double.doubleToLongBits(x);
-			double m = ((bits & ~(-1L<<52))+(1L<<52))*(bits >= 0? .5/(1L<<52): -.5/(1L<<52));
-			double e = ((int) (bits>>52) & 0x7ff)-1022;
-			return varargsOf(valueOf(m), valueOf(e));
-		}
-	}
+    @LuaFunction
+    public Varargs tan(Varargs args) {
+        return valueOf(Math.tan(args.checkdouble(1)));
+    }
 
-	static class max extends VarArgFunction {
-		@Override
-		public Varargs invoke(Varargs args) {
-			LuaValue m = args.checknumber(1);
-			for (int i = 2, n = args.narg(); i <= n; ++i) {
-				LuaValue v = args.checknumber(i);
-				if (m.lt_b(v))
-					m = v;
-			}
-			return m;
-		}
-	}
 
-	static class min extends VarArgFunction {
-		@Override
-		public Varargs invoke(Varargs args) {
-			LuaValue m = args.checknumber(1);
-			for (int i = 2, n = args.narg(); i <= n; ++i) {
-				LuaValue v = args.checknumber(i);
-				if (v.lt_b(m))
-					m = v;
-			}
-			return m;
-		}
-	}
+    /**
+     * compute power using installed math library, or default if there is no
+     * math library installed
+     */
+    public static LuaValue dpow(double a, double b) {
+        return LuaDouble.valueOf(MATHLIB != null ? MATHLIB.dpow_lib(a, b) : dpow_default(a, b));
+    }
 
-	static class modf extends VarArgFunction {
-		@Override
-		public Varargs invoke(Varargs args) {
-			LuaValue n = args.arg1();
-			/* number is its own integer part, no fractional part */
-			if (n.islong())
-				return varargsOf(n.tonumber(), valueOf(0.0));
-			double x = n.checkdouble();
-			/* integer part (rounds toward zero) */
-			double intPart = x > 0? Math.floor(x): Math.ceil(x);
-			/* fractional part (test needed for inf/-inf) */
-			double fracPart = x == intPart? 0.0: x-intPart;
-			return varargsOf(valueOf(intPart), valueOf(fracPart));
-		}
-	}
+    public static double dpow_d(double a, double b) {
+        return MATHLIB != null ? MATHLIB.dpow_lib(a, b) : dpow_default(a, b);
+    }
 
-	static class random extends LibFunction {
-		Random random = new Random();
+    /**
+     * Hook to override default dpow behavior with faster implementation.
+     */
+    public double dpow_lib(double a, double b) {
+        return dpow_default(a, b);
+    }
 
-		@Override
-		public LuaValue call() {
-			return valueOf(random.nextDouble());
-		}
-
-		@Override
-		public LuaValue call(LuaValue a) {
-			int m = a.checkint();
-			if (m < 1)
-				argerror(1, "interval is empty");
-			return valueOf(1+random.nextInt(m));
-		}
-
-		@Override
-		public LuaValue call(LuaValue a, LuaValue b) {
-			int m = a.checkint();
-			int n = b.checkint();
-			if (n < m)
-				argerror(2, "interval is empty");
-			return valueOf(m+random.nextInt(n+1-m));
-		}
-
-	}
-
-	static class randomseed extends OneArgFunction {
-		final random random;
-
-		randomseed(random random) {
-			this.random = random;
-		}
-
-		@Override
-		public LuaValue call(LuaValue arg) {
-			long seed = arg.checklong();
-			random.random = new Random(seed);
-			return NONE;
-		}
-	}
-
-	/**
-	 * compute power using installed math library, or default if there is no
-	 * math library installed
-	 */
-	public static LuaValue dpow(double a, double b) {
-		return LuaDouble.valueOf(MATHLIB != null? MATHLIB.dpow_lib(a, b): dpow_default(a, b));
-	}
-
-	public static double dpow_d(double a, double b) {
-		return MATHLIB != null? MATHLIB.dpow_lib(a, b): dpow_default(a, b);
-	}
-
-	/**
-	 * Hook to override default dpow behavior with faster implementation.
-	 */
-	public double dpow_lib(double a, double b) {
-		return dpow_default(a, b);
-	}
-
-	/**
-	 */
-	protected static double dpow_default(double a, double b) {
-		if (b < 0)
-			return 1/dpow_default(a, -b);
-		double p = 1;
-		int whole = (int) b;
-		for (double v = a; whole > 0; whole >>= 1, v *= v)
-			if ((whole & 1) != 0)
-				p *= v;
-		if ((b -= whole) > 0) {
-			int frac = (int) (0x10000*b);
-			for (; (frac & 0xffff) != 0; frac <<= 1) {
-				a = Math.sqrt(a);
-				if ((frac & 0x8000) != 0)
-					p *= a;
-			}
-		}
-		return p;
-	}
+    /**
+     *
+     */
+    protected static double dpow_default(double a, double b) {
+        if (b < 0)
+            return 1 / dpow_default(a, -b);
+        double p = 1;
+        int whole = (int) b;
+        for (double v = a; whole > 0; whole >>= 1, v *= v)
+            if ((whole & 1) != 0)
+                p *= v;
+        if ((b -= whole) > 0) {
+            int frac = (int) (0x10000 * b);
+            for (; (frac & 0xffff) != 0; frac <<= 1) {
+                a = Math.sqrt(a);
+                if ((frac & 0x8000) != 0)
+                    p *= a;
+            }
+        }
+        return p;
+    }
 
 }

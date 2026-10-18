@@ -1,24 +1,24 @@
 /*******************************************************************************
-* Copyright (c) 2009-2011 Luaj.org. All rights reserved.
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-******************************************************************************/
+ * Copyright (c) 2009-2011 Luaj.org. All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ ******************************************************************************/
 package org.luaj.vm2.lib;
 
 import org.luaj.vm2.LuaError;
@@ -64,31 +64,31 @@ import org.luaj.vm2.Varargs;
  *
  * public class hyperbolic extends TwoArgFunction {
  *
- *	public hyperbolic() {}
+ * 	public hyperbolic() {}
  *
- *	public LuaValue call(LuaValue modname, LuaValue env) {
- *		LuaValue library = tableOf();
- *		library.set( "sinh", new sinh() );
- *		library.set( "cosh", new cosh() );
- *		env.set( "hyperbolic", library );
- *		return library;
- *	}
+ * 	public LuaValue call(LuaValue modname, LuaValue env) {
+ * 		LuaValue library = tableOf();
+ * 		library.set( "sinh", new sinh() );
+ * 		library.set( "cosh", new cosh() );
+ * 		env.set( "hyperbolic", library );
+ * 		return library;
+ *    }
  *
- *	static class sinh extends OneArgFunction {
- *		public LuaValue call(LuaValue x) {
- *			return LuaValue.valueOf(Math.sinh(x.checkdouble()));
- *		}
- *	}
+ * 	static class sinh extends OneArgFunction {
+ * 		public LuaValue call(LuaValue x) {
+ * 			return LuaValue.valueOf(Math.sinh(x.checkdouble()));
+ *        }
+ *    }
  *
- *	static class cosh extends OneArgFunction {
- *		public LuaValue call(LuaValue x) {
- *			return LuaValue.valueOf(Math.cosh(x.checkdouble()));
- *		}
- *	}
- *}
- *}
+ * 	static class cosh extends OneArgFunction {
+ * 		public LuaValue call(LuaValue x) {
+ * 			return LuaValue.valueOf(Math.cosh(x.checkdouble()));
+ *        }
+ *    }
+ * }
+ * }
  * </pre>
- *
+ * <p>
  * The default constructor is used to instantiate the library in response to
  * {@code require 'hyperbolic'} statement, provided it is on Java&quot;s class
  * path. This instance is then invoked with 2 arguments: the name supplied to
@@ -131,132 +131,117 @@ import org.luaj.vm2.Varargs;
  */
 abstract public class LibFunction extends LuaFunction {
 
-	/**
-	 * User-defined opcode to differentiate between instances of the library
-	 * function class.
-	 * <p>
-	 * Subclass will typicall switch on this value to provide the specific
-	 * behavior for each function.
-	 */
-	protected int opcode;
+    /**
+     * User-defined opcode to differentiate between instances of the library
+     * function class.
+     * <p>
+     * Subclass will typicall switch on this value to provide the specific
+     * behavior for each function.
+     */
+    protected int opcode;
 
-	/**
-	 * The common name for this function, useful for debugging.
-	 * <p>
-	 * Binding functions initialize this to the name to which it is bound.
-	 */
-	protected String name;
+    /**
+     * The common name for this function, useful for debugging.
+     * <p>
+     * Binding functions initialize this to the name to which it is bound.
+     */
+    protected String name;
 
-	/** Default constructor for use by subclasses */
-	protected LibFunction() {
-	}
+    /**
+     * Default constructor for use by subclasses
+     */
+    protected LibFunction() {
+    }
 
-	@Override
-	public String tojstring() {
-		return name != null? "function: " + name: super.tojstring();
-	}
+    @Override
+    public String tojstring() {
+        return name != null ? "function: " + name : super.tojstring();
+    }
 
-	/**
-	 * Bind a set of library functions.
-	 * <p>
-	 * An array of names is provided, and the first name is bound with opcode =
-	 * 0, second with 1, etc.
-	 *
-	 * @param env     The environment to apply to each bound function
-	 * @param factory the Class to instantiate for each bound function
-	 * @param names   array of String names, one for each function.
-	 * @see #bind(LuaValue, Class, String[], int)
-	 */
-	protected void bind(LuaValue env, Class factory, String[] names) {
-		bind(env, factory, names, 0);
-	}
+    /**
+     * Bind a set of library functions.
+     * <p>
+     * An array of names is provided, and the first name is bound with opcode =
+     * 0, second with 1, etc.
+     *
+     * @param env     The environment to apply to each bound function
+     * @param factory the Class to instantiate for each bound function
+     * @param names   array of String names, one for each function.
+     * @see #bind(LuaValue, Class, String[], int)
+     */
+    /**
+     * Bind a set of library functions, with an offset
+     * <p>
+     * An array of names is provided, and the first name is bound with opcode =
+     * {@code firstopcode}, second with {@code firstopcode+1}, etc.
+     *
+     * @param env         The environment to apply to each bound function
+     * @param factory     the Class to instantiate for each bound function
+     * @param names       array of String names, one for each function.
+     * @param firstopcode the first opcode to use
+     * @see #bind(LuaValue, Class, String[])
+     */
+    /**
+     * Java code generation utility to allocate storage for upvalue, leave it
+     * empty
+     */
+    protected static LuaValue[] newupe() {
+        return new LuaValue[1];
+    }
 
-	/**
-	 * Bind a set of library functions, with an offset
-	 * <p>
-	 * An array of names is provided, and the first name is bound with opcode =
-	 * {@code firstopcode}, second with {@code firstopcode+1}, etc.
-	 *
-	 * @param env         The environment to apply to each bound function
-	 * @param factory     the Class to instantiate for each bound function
-	 * @param names       array of String names, one for each function.
-	 * @param firstopcode the first opcode to use
-	 * @see #bind(LuaValue, Class, String[])
-	 */
-	protected void bind(LuaValue env, Class factory, String[] names, int firstopcode) {
-		try {
-			for (int i = 0, n = names.length; i < n; i++) {
-				LibFunction f = (LibFunction) factory.newInstance();
-				f.opcode = firstopcode+i;
-				f.name = names[i];
-				env.set(f.name, f);
-			}
-		} catch (Exception e) {
-			throw new LuaError("bind failed: " + e);
-		}
-	}
+    /**
+     * Java code generation utility to allocate storage for upvalue, initialize
+     * with nil
+     */
+    protected static LuaValue[] newupn() {
+        return new LuaValue[]{NIL};
+    }
 
-	/**
-	 * Java code generation utility to allocate storage for upvalue, leave it
-	 * empty
-	 */
-	protected static LuaValue[] newupe() {
-		return new LuaValue[1];
-	}
+    /**
+     * Java code generation utility to allocate storage for upvalue, initialize
+     * with value
+     */
+    protected static LuaValue[] newupl(LuaValue v) {
+        return new LuaValue[]{v};
+    }
 
-	/**
-	 * Java code generation utility to allocate storage for upvalue, initialize
-	 * with nil
-	 */
-	protected static LuaValue[] newupn() {
-		return new LuaValue[] { NIL };
-	}
+    @Override
+    public LuaValue call() {
+        return argerror(1, "value expected");
+    }
 
-	/**
-	 * Java code generation utility to allocate storage for upvalue, initialize
-	 * with value
-	 */
-	protected static LuaValue[] newupl(LuaValue v) {
-		return new LuaValue[] { v };
-	}
+    @Override
+    public LuaValue call(LuaValue a) {
+        return call();
+    }
 
-	@Override
-	public LuaValue call() {
-		return argerror(1, "value expected");
-	}
+    @Override
+    public LuaValue call(LuaValue a, LuaValue b) {
+        return call(a);
+    }
 
-	@Override
-	public LuaValue call(LuaValue a) {
-		return call();
-	}
+    @Override
+    public LuaValue call(LuaValue a, LuaValue b, LuaValue c) {
+        return call(a, b);
+    }
 
-	@Override
-	public LuaValue call(LuaValue a, LuaValue b) {
-		return call(a);
-	}
+    public LuaValue call(LuaValue a, LuaValue b, LuaValue c, LuaValue d) {
+        return call(a, b, c);
+    }
 
-	@Override
-	public LuaValue call(LuaValue a, LuaValue b, LuaValue c) {
-		return call(a, b);
-	}
-
-	public LuaValue call(LuaValue a, LuaValue b, LuaValue c, LuaValue d) {
-		return call(a, b, c);
-	}
-
-	@Override
-	public Varargs invoke(Varargs args) {
-		switch (args.narg()) {
-		case 0:
-			return call();
-		case 1:
-			return call(args.arg1());
-		case 2:
-			return call(args.arg1(), args.arg(2));
-		case 3:
-			return call(args.arg1(), args.arg(2), args.arg(3));
-		default:
-			return call(args.arg1(), args.arg(2), args.arg(3), args.arg(4));
-		}
-	}
+    @Override
+    public Varargs invoke(Varargs args) {
+        switch (args.narg()) {
+            case 0:
+                return call();
+            case 1:
+                return call(args.arg1());
+            case 2:
+                return call(args.arg1(), args.arg(2));
+            case 3:
+                return call(args.arg1(), args.arg(2), args.arg(3));
+            default:
+                return call(args.arg1(), args.arg(2), args.arg(3), args.arg(4));
+        }
+    }
 }

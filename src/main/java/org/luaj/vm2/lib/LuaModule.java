@@ -1,14 +1,19 @@
 package org.luaj.vm2.lib;
 
+import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
+/**
+ * A library module that can be initialized in a Lua environment.
+ */
 public interface LuaModule {
-    void init(LuaValue name, LuaValue env);
+    /**
+     * Initialize this module in {@code env}.
+     *
+     * @param name the name supplied by the module loader
+     * @param env the environment receiving the module
+     */
+    void init(LuaTable self, LuaValue name, LuaValue env);
 
     default String name() {
         return "";

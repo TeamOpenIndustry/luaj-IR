@@ -6,6 +6,7 @@ import org.luaj.vm2.Varargs;
 
 import java.lang.invoke.*;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
 public class LibraryBuilder {
@@ -18,7 +19,7 @@ public class LibraryBuilder {
 
         MethodHandles.Lookup lookup = MethodHandles.lookup();
 
-        module.init(LuaValue.EMPTYSTRING, env);
+        module.init(table, LuaValue.EMPTYSTRING, env);
 
         Class<?> parent = clazz;
         while (parent != null && parent != Object.class) {
@@ -60,31 +61,38 @@ public class LibraryBuilder {
                     }
                 }
 
+                MethodHandle methodHandle = lookup.unreflect(method);
 
+                boolean isStatic = Modifier.isStatic(method.getModifiers());
 
-                MethodHandle methodHandle = lookup.unreflect(method).bindTo(module);
+                MethodType factoryType = isStatic ? MethodType.methodType(type) : MethodType.methodType(type, clazz);
 
-                MethodType factoryType = MethodType.methodType(type);
+                MethodType instantiated = methodHandle.type();
+                if (!isStatic) {
+                    instantiated = instantiated.dropParameterTypes(0, 1);
+                }
 
-                CallSite callSite = LambdaMetafactory.metafactory(lookup, "call", factoryType, interfaceMethodType, methodHandle, methodHandle.type());
+                CallSite callSite = LambdaMetafactory.metafactory(lookup, "call", factoryType, interfaceMethodType, methodHandle, instantiated);
+
+                Object impl = isStatic ? callSite.getTarget().invoke() : callSite.getTarget().invoke(module);
 
                 LibFunction finalFunction;
 
                 if (type == Functions.VarArgs.class) {
-                    finalFunction = new VarArgFunction((Functions.VarArgs) callSite.getTarget().invoke());
+                    finalFunction = new VarArgFunction((Functions.VarArgs) impl);
                 } else {
                     switch (methodArgs) {
                         case 0:
-                            finalFunction = new ZeroArgFunction((Functions.ZeroArgs) callSite.getTarget().invoke());
+                            finalFunction = new ZeroArgFunction((Functions.ZeroArgs) impl);
                             break;
                         case 1:
-                            finalFunction = new OneArgFunction((Functions.OneArgs) callSite.getTarget().invoke());
+                            finalFunction = new OneArgFunction((Functions.OneArgs) impl);
                             break;
                         case 2:
-                            finalFunction = new TwoArgFunction((Functions.TwoArgs) callSite.getTarget().invoke());
+                            finalFunction = new TwoArgFunction((Functions.TwoArgs) impl);
                             break;
                         case 3:
-                            finalFunction = new ThreeArgFunction((Functions.ThreeArgs) callSite.getTarget().invoke());
+                            finalFunction = new ThreeArgFunction((Functions.ThreeArgs) impl);
                             break;
                         default:
                             throw new UnsupportedOperationException();
@@ -112,6 +120,7 @@ public class LibraryBuilder {
             }
         } else {
             String name = moduleName.isEmpty() ? clazz.getName() : moduleName;
+
             env.set(name, table);
             if (!env.get("package").isnil()) {
                 env.get("package").get("loaded").set(name, table);

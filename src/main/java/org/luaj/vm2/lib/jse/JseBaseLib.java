@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.luaj.vm2.Globals;
+import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.BaseLib;
 import org.luaj.vm2.lib.LibFunction;
@@ -99,10 +100,9 @@ public class JseBaseLib extends org.luaj.vm2.lib.BaseLib {
 	 *                instance.
 	 */
 	@Override
-	public LuaValue call(LuaValue modname, LuaValue env) {
-		super.call(modname, env);
+	public void init(LuaTable self, LuaValue modname, LuaValue env) {
+		super.init(self, modname, env);
 		env.checkglobals().STDIN = System.in;
-		return env;
 	}
 
 	/**

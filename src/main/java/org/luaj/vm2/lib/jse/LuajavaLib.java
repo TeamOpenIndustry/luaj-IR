@@ -27,6 +27,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
+import static org.luaj.vm2.LuaValue.*;
+
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaTable;
@@ -34,6 +36,7 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.Varargs;
 import org.luaj.vm2.compiler.LuaC;
 import org.luaj.vm2.lib.LibFunction;
+import org.luaj.vm2.lib.LuaFunction;
 import org.luaj.vm2.lib.VarArgFunction;
 
 /**
@@ -90,7 +93,47 @@ import org.luaj.vm2.lib.VarArgFunction;
  * @see <a href=
  *      "http://www.keplerproject.org/luajava/manual.html#luareference">http://www.keplerproject.org/luajava/manual.html#luareference</a>
  */
-public class LuajavaLib extends VarArgFunction {
+import static org.luaj.vm2.LuaValue.*;
+
+public class LuajavaLib implements org.luaj.vm2.lib.LuaModule {
+	private int opcode;
+
+	@Override
+	public void init(LuaTable self, LuaValue name, LuaValue env) {
+	}
+
+	@Override
+	public String name() { return "luajava"; }
+
+	@LuaFunction
+	public LuaValue bindClass(LuaValue name) {
+		opcode = BINDCLASS;
+		return invoke(name).arg1();
+	}
+
+	@LuaFunction
+	public Varargs newInstance(Varargs args) {
+		opcode = NEWINSTANCE;
+		return invoke(args);
+	}
+
+	@org.luaj.vm2.lib.LuaFunction(name = "new")
+	public Varargs newObject(Varargs args) {
+		opcode = NEW;
+		return invoke(args);
+	}
+
+	@LuaFunction
+	public Varargs createProxy(Varargs args) {
+		opcode = CREATEPROXY;
+		return invoke(args);
+	}
+
+	@LuaFunction
+	public Varargs loadLib(Varargs args) {
+		opcode = LOADLIB;
+		return invoke(args);
+	}
 
 	static final int INIT        = 0;
 	static final int BINDCLASS   = 1;
@@ -106,20 +149,11 @@ public class LuajavaLib extends VarArgFunction {
 	public LuajavaLib() {
 	}
 
-	@Override
 	public Varargs invoke(Varargs args) {
 		try {
 			switch (opcode) {
-			case INIT: {
-				// LuaValue modname = args.arg1();
-				LuaValue env = args.arg(2);
-				LuaTable t = new LuaTable();
-				bind(t, this.getClass(), NAMES, BINDCLASS);
-				env.set("luajava", t);
-				if (!env.get("package").isnil())
-					env.get("package").get("loaded").set("luajava", t);
-				return t;
-			}
+			case INIT:
+				return NIL;
 			case BINDCLASS: {
 				final Class clazz = classForName(args.checkjstring(1));
 				return JavaClass.forClass(clazz);

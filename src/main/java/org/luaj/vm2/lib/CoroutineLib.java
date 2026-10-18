@@ -1,25 +1,27 @@
 /*******************************************************************************
-* Copyright (c) 2007-2011 LuaJ. All rights reserved.
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-******************************************************************************/
+ * Copyright (c) 2007-2011 LuaJ. All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ ******************************************************************************/
 package org.luaj.vm2.lib;
+
+import static org.luaj.vm2.LuaValue.*;
 
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaTable;
@@ -67,102 +69,84 @@ import org.luaj.vm2.Varargs;
  * @see LibFunction
  * @see org.luaj.vm2.lib.jse.JsePlatform
  * @see <a href="http://www.lua.org/manual/5.2/manual.html#6.2">Lua 5.2
- *      Coroutine Lib Reference</a>
+ * Coroutine Lib Reference</a>
  */
-public class CoroutineLib extends TwoArgFunction {
+public class CoroutineLib implements LuaModule {
 
-	static int coroutine_count = 0;
+    @Override
+    public void init(LuaTable self, LuaValue name, LuaValue env) {
+        globals = env.checkglobals();
+    }
 
-	Globals globals;
+    @Override
+    public String name() {
+        return "coroutine";
+    }
 
-	/**
-	 * Perform one-time initialization on the library by creating a table
-	 * containing the library functions, adding that table to the supplied
-	 * environment, adding the table to package.loaded, and returning table as
-	 * the return value.
-	 *
-	 * @param modname the module name supplied if this is loaded via 'require'.
-	 * @param env     the environment to load into, which must be a Globals
-	 *                instance.
-	 */
-	@Override
-	public LuaValue call(LuaValue modname, LuaValue env) {
-		globals = env.checkglobals();
-		LuaTable coroutine = new LuaTable();
-		coroutine.set("create", new create());
-		coroutine.set("resume", new resume());
-		coroutine.set("running", new running());
-		coroutine.set("status", new status());
-		coroutine.set("yield", new yield());
-		coroutine.set("wrap", new wrap());
-		env.set("coroutine", coroutine);
-		if (!env.get("package").isnil())
-			env.get("package").get("loaded").set("coroutine", coroutine);
-		return coroutine;
-	}
+    static int coroutine_count = 0;
 
-	final class create extends LibFunction {
-		@Override
-		public LuaValue call(LuaValue f) {
-			return new LuaThread(globals, f.checkfunction());
-		}
-	}
+    Globals globals;
 
-	static final class resume extends VarArgFunction {
-		@Override
-		public Varargs invoke(Varargs args) {
-			final LuaThread t = args.checkthread(1);
-			return t.resume(args.subargs(2));
-		}
-	}
+    /**
+     * Perform one-time initialization on the library by creating a table
+     * containing the library functions, adding that table to the supplied
+     * environment, adding the table to package.loaded, and returning table as
+     * the return value.
+     *
+     * @param modname the module name supplied if this is loaded via 'require'.
+     * @param env     the environment to load into, which must be a Globals
+     *                instance.
+     */
+    // Annotation-bound module exports.
+    @LuaFunction
+    public Varargs create(Varargs args) {
+        return new LuaThread(globals, args.checkfunction(1));
+    }
 
-	final class running extends VarArgFunction {
-		@Override
-		public Varargs invoke(Varargs args) {
-			final LuaThread r = globals.running;
-			return varargsOf(r, valueOf(r.isMainThread()));
-		}
-	}
+    @LuaFunction
+    public Varargs resume(Varargs args) {
+        final LuaThread t = args.checkthread(1);
+        return t.resume(args.subargs(2));
+    }
 
-	static final class status extends LibFunction {
-		@Override
-		public LuaValue call(LuaValue t) {
-			LuaThread lt = t.checkthread();
-			return valueOf(lt.getStatus());
-		}
-	}
+    @LuaFunction
+    public Varargs running(Varargs args) {
+        final LuaThread r = globals.running;
+        return varargsOf(r, valueOf(r.isMainThread()));
+    }
 
-	final class yield extends VarArgFunction {
-		@Override
-		public Varargs invoke(Varargs args) {
-			return globals.yield(args);
-		}
-	}
+    @LuaFunction
+    public Varargs status(Varargs args) {
+        return valueOf(args.checkthread(1).getStatus());
+    }
 
-	final class wrap extends LibFunction {
-		@Override
-		public LuaValue call(LuaValue f) {
-			final LuaValue func = f.checkfunction();
-			final LuaThread thread = new LuaThread(globals, func);
-			return new wrapper(thread);
-		}
-	}
+    @LuaFunction
+    public Varargs yield(Varargs args) {
+        return globals.yield(args);
+    }
 
-	static final class wrapper extends VarArgFunction {
-		final LuaThread luathread;
+    @LuaFunction
+    public Varargs wrap(Varargs args) {
+        final LuaThread luathread = new LuaThread(globals, args.checkfunction(1));
+        return new wrapper(luathread);
+    }
 
-		wrapper(LuaThread luathread) {
-			this.luathread = luathread;
-		}
 
-		@Override
-		public Varargs invoke(Varargs args) {
-			final Varargs result = luathread.resume(args);
-			if (result.arg1().toboolean()) {
-				return result.subargs(2);
-			} else {
-				return error(result.arg(2).tojstring());
-			}
-		}
-	}
+    static final class wrapper extends VarArgFunction {
+        final LuaThread luathread;
+
+        wrapper(LuaThread luathread) {
+            this.luathread = luathread;
+        }
+
+        @Override
+        public Varargs invoke(Varargs args) {
+            final Varargs result = luathread.resume(args);
+            if (result.arg1().toboolean()) {
+                return result.subargs(2);
+            } else {
+                return error(result.arg(2).tojstring());
+            }
+        }
+    }
 }

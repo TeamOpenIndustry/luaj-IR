@@ -1,30 +1,34 @@
 /*******************************************************************************
-* Copyright (c) 2009-2011 Luaj.org. All rights reserved.
-*
-* Permission is hereby granted, free of charge, to any person obtaining a copy
-* of this software and associated documentation files (the "Software"), to deal
-* in the Software without restriction, including without limitation the rights
-* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-* copies of the Software, and to permit persons to whom the Software is
-* furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-* THE SOFTWARE.
-******************************************************************************/
+ * Copyright (c) 2009-2011 Luaj.org. All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ ******************************************************************************/
 package org.luaj.vm2.lib.jse;
 
+import static org.luaj.vm2.LuaValue.*;
+
 import org.luaj.vm2.Globals;
+import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.LibFunction;
-import org.luaj.vm2.lib.TwoArgFunction;
+import org.luaj.vm2.lib.LuaFunction;
 
 /**
  * Subclass of {@link LibFunction} which implements the lua standard
@@ -68,106 +72,79 @@ import org.luaj.vm2.lib.TwoArgFunction;
  * @see org.luaj.vm2.lib.jse.JsePlatform
  * @see org.luaj.vm2.lib.jse.JseMathLib
  * @see <a href="http://www.lua.org/manual/5.2/manual.html#6.6">Lua 5.2 Math Lib
- *      Reference</a>
+ * Reference</a>
  */
 public class JseMathLib extends org.luaj.vm2.lib.MathLib {
 
-	public JseMathLib() {}
+    public JseMathLib() {
+    }
 
-	/**
-	 * Perform one-time initialization on the library by creating a table
-	 * containing the library functions, adding that table to the supplied
-	 * environment, adding the table to package.loaded, and returning table as
-	 * the return value.
-	 * <P>
-	 * Specifically, adds all library functions that can be implemented directly
-	 * and tanh.
-	 *
-	 * @param modname the module name supplied if this is loaded via 'require'.
-	 * @param env     the environment to load into, which must be a Globals
-	 *                instance.
-	 */
-	@Override
-	public LuaValue call(LuaValue modname, LuaValue env) {
-		super.call(modname, env);
-		LuaValue math = env.get("math");
-		math.set("acos", new acos());
-		math.set("asin", new asin());
-		math.set("atan", new atan());
-		math.set("atan2", new atan2());
-		math.set("cosh", new cosh());
-		math.set("exp", new exp());
-		math.set("log", new log());
-		math.set("pow", new pow());
-		math.set("sinh", new sinh());
-		math.set("tanh", new tanh());
-		return math;
-	}
+    /**
+     * Perform one-time initialization on the library by creating a table
+     * containing the library functions, adding that table to the supplied
+     * environment, adding the table to package.loaded, and returning table as
+     * the return value.
+     * <p>
+     * Specifically, adds all library functions that can be implemented directly
+     * and tanh.
+     *
+     * @param modname the module name supplied if this is loaded via 'require'.
+     * @param env     the environment to load into, which must be a Globals
+     *                instance.
+     */
+    @LuaFunction
+    public Varargs acos(Varargs a) {
+        return valueOf(Math.acos(a.checkdouble(1)));
+    }
 
-	static final class acos extends UnaryOp {
-		@Override
-		protected double call(double d) { return Math.acos(d); }
-	}
+    @LuaFunction
+    public Varargs asin(Varargs a) {
+        return valueOf(Math.asin(a.checkdouble(1)));
+    }
 
-	static final class asin extends UnaryOp {
-		@Override
-		protected double call(double d) { return Math.asin(d); }
-	}
+    @LuaFunction
+    public Varargs atan(Varargs a) {
+        return valueOf(Math.atan(a.checkdouble(1)));
+    }
 
-	static final class atan extends TwoArgFunction {
-		@Override
-		public LuaValue call(LuaValue x, LuaValue y) {
-			return valueOf(Math.atan2(x.checkdouble(), y.optdouble(1)));
-		}
-	}
+    @LuaFunction
+    public Varargs atan2(Varargs a) {
+        return valueOf(Math.atan2(a.checkdouble(1), a.checkdouble(2)));
+    }
 
-	static final class atan2 extends TwoArgFunction {
-		@Override
-		public LuaValue call(LuaValue x, LuaValue y) {
-			return valueOf(Math.atan2(x.checkdouble(), y.checkdouble()));
-		}
-	}
+    @LuaFunction
+    public Varargs cosh(Varargs a) {
+        double x = a.checkdouble(1);
+        return valueOf((Math.exp(x) + Math.exp(-x)) / 2);
+    }
 
-	static final class cosh extends UnaryOp {
-		@Override
-		protected double call(double d) { return Math.cosh(d); }
-	}
+    @LuaFunction
+    public Varargs log(Varargs a) {
+        return valueOf(Math.log(a.checkdouble(1)));
+    }
 
-	static final class exp extends UnaryOp {
-		@Override
-		protected double call(double d) { return Math.exp(d); }
-	}
+    @LuaFunction
+    public Varargs sinh(Varargs a) {
+        double x = a.checkdouble(1);
+        return valueOf((Math.exp(x) - Math.exp(-x)) / 2);
+    }
 
-	static final class log extends TwoArgFunction {
-		@Override
-		public LuaValue call(LuaValue x, LuaValue base) {
-			double nat = Math.log(x.checkdouble());
-			double b = base.optdouble(Math.E);
-			if (b != Math.E)
-				nat /= Math.log(b);
-			return valueOf(nat);
-		}
-	}
+    @LuaFunction
+    public Varargs tanh(Varargs a) {
+        double x = a.checkdouble(1);
+        return valueOf(Math.tanh(x));
+    }
 
-	static final class pow extends BinaryOp {
-		@Override
-		protected double call(double x, double y) { return Math.pow(x, y); }
-	}
+    public void init(LuaTable self, LuaValue modname, LuaValue env) {
+        super.init(self, modname, env);
+    }
 
-	static final class sinh extends UnaryOp {
-		@Override
-		protected double call(double d) { return Math.sinh(d); }
-	}
-
-	static final class tanh extends UnaryOp {
-		@Override
-		protected double call(double d) { return Math.tanh(d); }
-	}
-
-	/** Faster, better version of pow() used by arithmetic operator ^ */
-	@Override
-	public double dpow_lib(double a, double b) {
-		return Math.pow(a, b);
-	}
+    /**
+     * Faster, better version of pow() used by arithmetic operator ^
+     */
+    @Override
+    public double dpow_lib(double a, double b) {
+        return Math.pow(a, b);
+    }
 
 }

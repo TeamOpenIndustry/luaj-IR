@@ -133,7 +133,6 @@ import org.luaj.vm2.lib.LuaModule;
  * @see Varargs
  */
 abstract public class LuaValue extends Varargs {
-
 	/**
 	 * Type enumeration constant for lua numbers that are ints, for
 	 * compatibility with lua 5.1 number patch only
@@ -1631,15 +1630,16 @@ abstract public class LuaValue extends Varargs {
 	public Varargs inext(LuaValue index) { return typerror("table"); }
 
 	/**
-	 * Load a library instance by calling it with and empty string as the
-	 * modname, and this Globals as the environment. This is normally used to
-	 * iniitalize the library instance and which may install itself into these
-	 * globals.
+	 * Load a library instance into this environment. Lua modules are initialized
+	 * through {@link LibraryBuilder}; legacy callable libraries retain their
+	 * {@code call("", this)} loading behavior.
 	 *
-	 * @param library The callable {@link LuaValue} to load into {@code this}
-	 * @return {@link LuaValue} returned by the initialization call.
+	 * @param library The callable library to load into {@code this}
+	 * @return the legacy initialization result
 	 */
-	public LuaValue load(LuaValue library) { return library.call(EMPTYSTRING, this); }
+	public LuaValue load(LuaFunction library) {
+		return library.call(EMPTYSTRING, this);
+	}
 
 	public LuaValue load(LuaModule object) {
         try {
