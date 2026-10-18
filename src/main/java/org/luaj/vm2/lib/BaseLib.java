@@ -285,18 +285,18 @@ public class BaseLib implements ResourceFinder, LuaModule {
         }
     }
 
-    public Functions.VarArgs next = args -> args.checktable(1).next(args.arg(2));
+    public VarArgFunction next = new VarArgFunction(args -> args.checktable(1).next(args.arg(2)));
 
     @LuaFunction
     public Varargs next(Varargs args) {
-        return next.call(args);
+        return next.invoke(args);
     }
 
     @LuaFunction
     public Varargs pairs(Varargs args) {
         LuaValue meta = args.arg1().getmetatable(), p;
         if (meta != null && (p = meta.get(LuaValue.PAIRS)).isfunction()) return p.invoke(args);
-        return varargsOf(new VarArgFunction(next), args.checktable(1), NIL);
+        return varargsOf(next, args.checktable(1), NIL);
     }
 
     @LuaFunction
