@@ -13,20 +13,11 @@ class LibraryBuilderTest {
     void loadsAnnotationBasedLibrary() {
         Globals globals = JsePlatform.standardGlobals();
 
-        assertEquals(
-                4294967294L,
-                globals.get("bit32")
-                        .get("bnot")
-                        .call(LuaValue.valueOf(1))
-                        .tolong()
-        );
-
-        assertEquals(
-                "OK",
-                globals.get("string")
-                        .get("upper")
-                        .call(LuaValue.valueOf("ok"))
-                        .tojstring()
-        );
+        assertEquals(4294967294L,
+                globals.get("bit32").get("bnot")
+                        .call(LuaValue.valueOf(1)).tolong());
+        assertEquals("OK",
+                globals.get("string").get("upper")
+                        .call(LuaValue.valueOf("ok")).tojstring());
     }
 }
