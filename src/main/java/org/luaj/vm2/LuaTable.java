@@ -21,6 +21,8 @@
  ******************************************************************************/
 package org.luaj.vm2;
 
+import org.luaj.vm2.lib.Functions;
+
 import java.lang.ref.WeakReference;
 import java.util.Vector;
 

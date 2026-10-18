@@ -48,13 +48,22 @@ import org.luaj.vm2.Varargs;
  * @see ThreeArgFunction
  * @see VarArgFunction
  */
-abstract public class OneArgFunction extends LibFunction {
+public class OneArgFunction extends LibFunction {
 
-	@Override
-	abstract public LuaValue call(LuaValue arg);
+	private final Functions.OneArgs func;
+
+	public OneArgFunction() {
+		this.func = arg -> NIL;
+	}
 
 	/** Default constructor */
-	public OneArgFunction() {
+	public OneArgFunction(Functions.OneArgs func) {
+		this.func = func;
+	}
+
+	@Override
+	public LuaValue call(LuaValue arg) {
+		return func.call(arg);
 	}
 
 	@Override

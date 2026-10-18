@@ -48,9 +48,16 @@ import org.luaj.vm2.Varargs;
  * @see TwoArgFunction
  * @see ThreeArgFunction
  */
-abstract public class VarArgFunction extends LibFunction {
+public class VarArgFunction extends LibFunction {
+
+	public final Functions.VarArgs func;
 
 	public VarArgFunction() {
+		this.func = v -> NIL;
+	}
+
+	public VarArgFunction(Functions.VarArgs func) {
+		this.func = func;
 	}
 
 	@Override
@@ -82,7 +89,7 @@ abstract public class VarArgFunction extends LibFunction {
 	 */
 	@Override
 	public Varargs invoke(Varargs args) {
-		return onInvoke(args).eval();
+		return func.call(args);
 	}
 
 	@Override

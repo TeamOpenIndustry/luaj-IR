@@ -21,6 +21,10 @@
 ******************************************************************************/
 package org.luaj.vm2;
 
+import org.luaj.vm2.lib.Functions;
+import org.luaj.vm2.lib.LibraryBuilder;
+import org.luaj.vm2.lib.LuaModule;
+
 /**
  * Base class for all concrete lua type values.
  * <p>
@@ -1636,6 +1640,15 @@ abstract public class LuaValue extends Varargs {
 	 * @return {@link LuaValue} returned by the initialization call.
 	 */
 	public LuaValue load(LuaValue library) { return library.call(EMPTYSTRING, this); }
+
+	public LuaValue load(LuaModule object) {
+        try {
+            LibraryBuilder.addModule(object, this);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+		return LuaValue.NIL;
+    }
 
 	// varargs references
 	@Override
