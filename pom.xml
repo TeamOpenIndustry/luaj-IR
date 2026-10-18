@@ -5,7 +5,7 @@
 
 	<groupId>org.luaj</groupId>
 	<artifactId>luaj</artifactId>
-	<version>3.2-poizzy</version>
+	<version>poizzy-3.1</version>
 
 	<packaging>jar</packaging>
 
