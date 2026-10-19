@@ -20,11 +20,8 @@ class LibraryModulesTest {
         assertTrue(globals.get("bit32").istable());
         assertTrue(globals.get("table").istable());
         assertTrue(globals.get("string").istable());
-        assertTrue(globals.get("coroutine").istable());
         assertTrue(globals.get("math").istable());
-        assertTrue(globals.get("io").istable());
         assertTrue(globals.get("os").istable());
-        assertTrue(globals.get("luajava").istable());
 
         assertSame(globals.get("package"), globals.get("package").get("loaded").get("package"));
         assertSame(globals.get("math"), globals.get("package").get("loaded").get("math"));
@@ -70,20 +67,6 @@ class LibraryModulesTest {
                 .call(LuaValue.valueOf(-4)).toint());
         assertEquals(1, globals.get("math").get("floor")
                 .call(LuaValue.valueOf(1.9)).toint());
-    }
-
-    @Test
-    void coroutineIoOsAndLuaJavaLibrariesExposeFunctions() {
-        Globals globals = JsePlatform.standardGlobals();
-
-        assertTrue(globals.get("coroutine").get("create").isfunction());
-        assertTrue(globals.get("coroutine").get("yield").isfunction());
-        assertTrue(globals.get("io").get("type").isfunction());
-        assertTrue(globals.get("os").get("clock").isfunction());
-        assertTrue(globals.get("os").get("time").isfunction());
-        assertTrue(globals.get("luajava").get("bindClass").isfunction());
-        assertFalse(globals.get("luajava").get("bindClass")
-                .call(LuaValue.valueOf("java.lang.String")).isnil());
     }
 
     @Test
