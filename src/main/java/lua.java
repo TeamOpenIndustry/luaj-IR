@@ -30,14 +30,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Vector;
 
-import org.luaj.vm2.Globals;
-import org.luaj.vm2.Lua;
-import org.luaj.vm2.LuaTable;
-import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.Print;
-import org.luaj.vm2.Varargs;
-import org.luaj.vm2.lib.jse.JsePlatform;
-import org.luaj.vm2.luajc.LuaJC;
+import de.poizzy.luaj.Globals;
+import de.poizzy.luaj.Lua;
+import de.poizzy.luaj.LuaTable;
+import de.poizzy.luaj.LuaValue;
+import de.poizzy.luaj.Print;
+import de.poizzy.luaj.Varargs;
+import de.poizzy.luaj.lib.jse.JsePlatform;
+import de.poizzy.luaj.luajc.LuaJC;
 
 /**
  * lua command for use in JSE environments.

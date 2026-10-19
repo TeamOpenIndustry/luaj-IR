@@ -365,7 +365,7 @@ To exclude the lua-to-lua-bytecode compiler, do not call
 but instead initialize globals with including only those libraries 
 that are needed and omitting the line:
 <pre>
-	org.luaj.vm2.compiler.LuaC.install(globals);
+	de.poizzy.luaj.compiler.LuaC.install(globals);
 </pre>
 
 
@@ -617,7 +617,7 @@ All lua value manipulation is now organized around
 <a href="http://luaj.org/luaj/3.0/api/org/luaj/vm2/LuaValue.html">LuaValue</a>
 which exposes the majority of interfaces used for lua computation.  
 <pre>
-	 <a href="http://luaj.org/luaj/3.0/api/org/luaj/vm2/LuaValue.html">org.luaj.vm2.LuaValue</a>
+	 <a href="http://luaj.org/luaj/3.0/api/org/luaj/vm2/LuaValue.html">de.poizzy.luaj.LuaValue</a>
 </pre>
 
 <h3>Common Functions</h3>
@@ -645,7 +645,7 @@ both a variable argument list and multiple return values.
 For convenience, <em>LuaValue</em> implements <em>Varargs</em> so a single value can be supplied anywhere 
 variable arguments are expected.      
 <pre>
-	 <a href="http://luaj.org/luaj/3.0/api/org/luaj/vm2/Varargs.html">org.luaj.vm2.Varargs</a>
+	 <a href="http://luaj.org/luaj/3.0/api/org/luaj/vm2/Varargs.html">de.poizzy.luaj.Varargs</a>
 </pre>
 
 <h3>Common Functions</h3>
@@ -666,11 +666,11 @@ The simplest way to implement a function is to choose a base class based on the 
 LuaJ provides 5 base classes for this purpose, depending if the function has 0, 1, 2, 3 or variable arguments, 
 and if it provide multiple return values.   
 <pre>
-	 <a href="http://luaj.org/luaj/3.0/api/org/luaj/vm2/lib/ZeroArgFunction.html">org.luaj.vm2.lib.ZeroArgFunction</a>
-	 <a href="http://luaj.org/luaj/3.0/api/org/luaj/vm2/lib/OneArgFunction.html">org.luaj.vm2.lib.OneArgFunction</a>
-	 <a href="http://luaj.org/luaj/3.0/api/org/luaj/vm2/lib/TwoArgFunction.html">org.luaj.vm2.lib.TwoArgFunction</a>
-	 <a href="http://luaj.org/luaj/3.0/api/org/luaj/vm2/lib/ThreeArgFunction.html">org.luaj.vm2.lib.ThreeArgFunction</a>
-	 <a href="http://luaj.org/luaj/3.0/api/org/luaj/vm2/lib/VarArgFunction.html">org.luaj.vm2.lib.VarArgFunction</a>
+	 <a href="http://luaj.org/luaj/3.0/api/org/luaj/vm2/lib/ZeroArgFunction.html">de.poizzy.luaj.function.ZeroArgFunction</a>
+	 <a href="http://luaj.org/luaj/3.0/api/org/luaj/vm2/lib/OneArgFunction.html">de.poizzy.luaj.function.OneArgFunction</a>
+	 <a href="http://luaj.org/luaj/3.0/api/org/luaj/vm2/lib/TwoArgFunction.html">de.poizzy.luaj.function.TwoArgFunction</a>
+	 <a href="http://luaj.org/luaj/3.0/api/org/luaj/vm2/lib/ThreeArgFunction.html">de.poizzy.luaj.function.ThreeArgFunction</a>
+	 <a href="http://luaj.org/luaj/3.0/api/org/luaj/vm2/lib/VarArgFunction.html">de.poizzy.luaj.function.VarArgFunction</a>
 </pre>
 
 Each of these functions has an abstract method that must be implemented, 
@@ -774,7 +774,7 @@ For this example to work the code in <em>hyperbolic.java</em> must be compiled a
 Closures still exist in this framework, but are optional, and are only used to implement lua bytecode execution, 
 and is generally not directly manipulated by the user of luaj.
 <p>
-See the <a href="http://luaj.org/luaj/3.0/api/org/luaj/vm2/LuaClosure.html">org.luaj.vm2.LuaClosure</a> 
+See the <a href="http://luaj.org/luaj/3.0/api/org/luaj/vm2/LuaClosure.html">de.poizzy.luaj.LuaClosure</a> 
 javadoc for details on using that class directly. 
 
 <h1>6 - <a name="6">Parser</a></h1>

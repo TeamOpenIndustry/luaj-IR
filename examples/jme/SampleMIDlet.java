@@ -3,7 +3,6 @@
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
 
-import org.luaj.vm2.*;
 import org.luaj.vm2.lib.jme.JmePlatform;
 
 

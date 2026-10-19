@@ -31,10 +31,10 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
-import org.luaj.vm2.Globals;
-import org.luaj.vm2.Lua;
-import org.luaj.vm2.lib.jse.JsePlatform;
-import org.luaj.vm2.luajc.LuaJC;
+import de.poizzy.luaj.Globals;
+import de.poizzy.luaj.Lua;
+import de.poizzy.luaj.lib.jse.JsePlatform;
+import de.poizzy.luaj.luajc.LuaJC;
 
 /**
  * Compiler for lua files to compile lua sources or lua binaries into java
