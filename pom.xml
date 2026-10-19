@@ -3,9 +3,9 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.luaj</groupId>
+	<groupId>de.poizy</groupId>
 	<artifactId>luaj</artifactId>
-	<version>poizzy-3.1</version>
+	<version>poizzy-3.1.1</version>
 
 	<packaging>jar</packaging>
 
@@ -133,7 +133,7 @@
 						<configuration>
 							<jdkVersion>1.8</jdkVersion>
 							<javadocFriendlyComments>true</javadocFriendlyComments>
-							<packageName>org.luaj.vm2.parser</packageName>
+							<packageName>de.poizzy.luaj.parser</packageName>
 							<sourceDirectory>src/main/javacc</sourceDirectory>
 							<outputDirectory>${project.build.directory}/generated-sources/javacc</outputDirectory>
 						</configuration>
