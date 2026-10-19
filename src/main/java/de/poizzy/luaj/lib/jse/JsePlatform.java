@@ -112,11 +112,11 @@ public class JsePlatform {
 		globals.load(new Bit32Lib());
 		globals.load(new TableLib());
 		globals.load(new JseStringLib());
-		globals.load(new CoroutineLib());
+		// globals.load(new CoroutineLib());
 		globals.load(new JseMathLib());
-		globals.load(new JseIoLib());
+		// globals.load(new JseIoLib());
 		globals.load(new JseOsLib());
-		globals.load(new LuajavaLib());
+		// globals.load(new LuajavaLib());
 		LoadState.install(globals);
 		LuaC.install(globals);
 		return globals;

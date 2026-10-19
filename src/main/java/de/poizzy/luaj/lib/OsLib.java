@@ -108,21 +108,6 @@ public class OsLib implements LuaModule {
     public static final String TMP_PREFIX = ".luaj";
     public static final String TMP_SUFFIX = "tmp";
 
-    private static final int CLOCK = 0;
-    private static final int DATE = 1;
-    private static final int DIFFTIME = 2;
-    private static final int EXECUTE = 3;
-    private static final int EXIT = 4;
-    private static final int GETENV = 5;
-    private static final int REMOVE = 6;
-    private static final int RENAME = 7;
-    private static final int SETLOCALE = 8;
-    private static final int TIME = 9;
-    private static final int TMPNAME = 10;
-
-    private static final String[] NAMES = {"clock", "date", "difftime", "execute", "exit", "getenv", "remove",
-            "rename", "setlocale", "time", "tmpname",};
-
     private static final long t0 = System.currentTimeMillis();
     private static long tmpnames = t0;
 
@@ -177,24 +162,28 @@ public class OsLib implements LuaModule {
         return valueOf(difftime(args.checkdouble(1), args.checkdouble(2)));
     }
 
-    @LuaFunction
+    // Unsafe
+    // @LuaFunction
     public Varargs execute(Varargs args) {
         return execute(args.optjstring(1, null));
     }
 
-    @LuaFunction
+    // Unsafe
+    // @LuaFunction
     public Varargs exit(Varargs args) {
         exit(args.optint(1, 0));
         return NONE;
     }
 
-    @LuaFunction
+    // Unsafe
+    // @LuaFunction
     public Varargs getenv(Varargs args) {
         String v = getenv(args.checkjstring(1));
         return v == null ? NIL : valueOf(v);
     }
 
-    @LuaFunction
+    // Unsafe
+    // @LuaFunction
     public Varargs remove(Varargs args) {
         try {
             remove(args.checkjstring(1));
@@ -204,7 +193,8 @@ public class OsLib implements LuaModule {
         }
     }
 
-    @LuaFunction
+    // Unsafe
+    // @LuaFunction
     public Varargs rename(Varargs args) {
         try {
             rename(args.checkjstring(1), args.checkjstring(2));
@@ -214,7 +204,8 @@ public class OsLib implements LuaModule {
         }
     }
 
-    @LuaFunction
+    // Unsafe
+    // @LuaFunction
     public Varargs setlocale(Varargs args) {
         String v = setlocale(args.optjstring(1, null), args.optjstring(2, "all"));
         return v == null ? NIL : valueOf(v);
@@ -225,7 +216,8 @@ public class OsLib implements LuaModule {
         return valueOf(time(args.opttable(1, null)));
     }
 
-    @LuaFunction
+    // Unsafe
+    //@LuaFunction
     public Varargs tmpname(Varargs args) {
         return valueOf(tmpname());
     }

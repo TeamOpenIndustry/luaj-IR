@@ -140,7 +140,8 @@ public class BaseLib implements ResourceFinder, LuaModule {
         return NIL;
     }
 
-    @LuaFunction
+    // Unsafe
+    // @LuaFunction
     public Varargs dofile(Varargs args) {
         args.argcheck(args.isstring(1) || args.isnil(1), 1, "filename must be string or nil");
         String filename = args.isstring(1) ? args.tojstring(1) : null;
@@ -178,7 +179,8 @@ public class BaseLib implements ResourceFinder, LuaModule {
                 source, mode, env);
     }
 
-    @LuaFunction
+    // Unsafe
+    // @LuaFunction
     public Varargs loadfile(Varargs args) {
         args.argcheck(args.isstring(1) || args.isnil(1), 1, "filename must be string or nil");
         String filename = args.isstring(1) ? args.tojstring(1) : null;

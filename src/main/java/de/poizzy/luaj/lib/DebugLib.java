@@ -146,7 +146,6 @@ public class DebugLib implements LuaModule {
      * @param env     the environment to load into, which must be a Globals
      *                instance.
      */
-    // Annotation-bound module exports.
     @de.poizzy.luaj.lib.LuaFunction
     public Varargs debug(Varargs args) {
         LuaThread t = args.narg() > 0 ? args.checkthread(1) : globals.running;

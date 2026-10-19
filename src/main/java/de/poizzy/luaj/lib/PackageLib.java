@@ -100,15 +100,15 @@ public class PackageLib implements LuaModule {
     @Override
     public void init(LuaTable self, LuaValue name, LuaValue env) {
         globals = env.checkglobals();
+        env.set("require", require);
         package_ = self;
         package_.set(_LOADED, new LuaTable());
         package_.set(_PRELOAD, new LuaTable());
         package_.set(_PATH, LuaValue.valueOf(DEFAULT_LUA_PATH));
         package_.set("config", FILE_SEP + "\n;\n?\n!\n-\n");
         LuaTable searchers = new LuaTable();
+        // Only load from preload table
         searchers.set(1, preload_searcher);
-        searchers.set(2, lua_searcher);
-        searchers.set(3, java_searcher);
         package_.set(_SEARCHERS, searchers);
         globals.package_ = this;
     }
@@ -165,56 +165,6 @@ public class PackageLib implements LuaModule {
         return val.isnil() ? valueOf("\n\tno field package.preload['" + name + "']") : val;
     });
 
-    /**
-     * Loader that loads as a lua script using the lua path currently in
-     */
-    public VarArgFunction lua_searcher = new VarArgFunction(args -> {
-        LuaString name = args.checkstring(1);
-
-        // get package path
-        LuaValue path = package_.get(_PATH);
-        if (!path.isstring())
-            return valueOf("package.path is not a string");
-
-        // get the searchpath function.
-        Varargs v = package_.get(_SEARCHPATH).invoke(varargsOf(name, path));
-
-        // Did we get a result?
-        if (!v.isstring(1))
-            return v.arg(2).tostring();
-        LuaString filename = v.arg1().strvalue();
-
-        // Try to load the file.
-        v = globals.loadfile(filename.tojstring());
-        if (v.arg1().isfunction())
-            return LuaValue.varargsOf(v.arg1(), filename);
-
-        // report error
-        return varargsOf(NIL, valueOf("'" + filename + "': " + v.arg(2).tojstring()));
-    });
-
-    /**
-     * Loader that loads as a Java class. Class must have public constructor and
-     * be a LuaValue.
-     */
-    public VarArgFunction java_searcher = new VarArgFunction(args -> {
-        String name = args.checkjstring(1);
-        String classname = toClassname(name);
-        Class<?> c;
-        LuaValue v;
-        try {
-            c = Class.forName(classname);
-            v = (LuaValue) c.newInstance();
-            if (v.isfunction())
-                v.initupvalue1(globals);
-            return varargsOf(v, globals);
-        } catch (ClassNotFoundException cnfe) {
-            return valueOf("\n\tno class '" + classname + "'");
-        } catch (Exception e) {
-            return valueOf("\n\tjava load failed on '" + classname + "', " + e);
-        }
-    });
-
     private static final LuaString _SENTINEL = valueOf("\u0001");
 
     private static final String FILE_SEP = FileSystems.getDefault().getSeparator();
@@ -222,40 +172,22 @@ public class PackageLib implements LuaModule {
     public PackageLib() {
     }
 
-    /**
-     * Perform one-time initialization on the library by adding package
-     * functions to the supplied environment, and returning it as the return
-     * value. It also creates the package.preload and package.loaded tables for
-     * use by other libraries.
-     *
-     * @param modname the module name supplied if this is loaded via 'require'.
-     * @param env     the environment to load into, typically a Globals
-     *                instance.
-     */
-    @LuaFunction
-    public Varargs require(Varargs args) {
+    private final VarArgFunction require = new VarArgFunction(args -> {
         LuaString name = args.checkstring(1);
         LuaValue loaded = package_.get(_LOADED), result = loaded.get(name);
         if (result.toboolean()) {
             if (result == _SENTINEL) error("loop or previous error loading module '" + name + "'");
             return result;
         }
-        LuaTable tbl = package_.get(_SEARCHERS).checktable();
-        StringBuffer sb = new StringBuffer();
-        Varargs loader;
-        for (int i = 1; ; i++) {
-            LuaValue searcher = tbl.get(i);
-            if (searcher.isnil()) error("module '" + name + "' not found: " + name + sb);
-            loader = searcher.invoke(name);
-            if (loader.isfunction(1)) break;
-            if (loader.isstring(1)) sb.append(loader.tojstring(1));
-        }
+
+        Varargs loader = preload_searcher.invoke(name);
+
         loaded.set(name, _SENTINEL);
         result = loader.arg1().call(name, loader.arg(2));
         if (!result.isnil()) loaded.set(name, result);
         else if ((result = loaded.get(name)) == _SENTINEL) loaded.set(name, result = LuaValue.TRUE);
         return result;
-    }
+    });
 
     @LuaFunction
     public Varargs loadlib(Varargs args) {
@@ -263,7 +195,7 @@ public class PackageLib implements LuaModule {
         return varargsOf(NIL, valueOf("dynamic libraries not enabled"), valueOf("absent"));
     }
 
-    @LuaFunction
+    // @LuaFunction
     public Varargs searchpath(Varargs args) {
         String name = args.checkjstring(1), path = args.checkjstring(2), sep = args.optjstring(3, "."), rep = args.optjstring(4, FILE_SEP);
         int e = -1, n = path.length();
@@ -290,7 +222,7 @@ public class PackageLib implements LuaModule {
         return varargsOf(NIL, valueOf(sb.toString()));
     }
 
-    @LuaFunction
+    // @LuaFunction
     public Varargs seeall(Varargs args) {
         LuaTable mt = new LuaTable();
         mt.set(LuaValue.INDEX, globals);
