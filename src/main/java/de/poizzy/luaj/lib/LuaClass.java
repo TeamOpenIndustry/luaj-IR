@@ -1,8 +1,8 @@
 package de.poizzy.luaj.lib;
 
-import de.poizzy.luaj.LuaValue;
 import de.poizzy.luaj.Varargs;
+import de.poizzy.luaj.function.VarArgFunction;
 
 public interface LuaClass extends LuaModule {
-    void constructor(LuaValue self, Varargs args);
+    void constructor(VarArgFunction newInstance, Varargs args);
 }

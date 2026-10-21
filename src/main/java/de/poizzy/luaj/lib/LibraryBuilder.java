@@ -246,7 +246,7 @@ public class LibraryBuilder {
 
                 instance.setmetatable(meta);
 
-                self.constructor(instance, args);
+                self.constructor((VarArgFunction) classTable.get("new"), args);
                 return instance;
             } catch (RuntimeException | Error e) {
                 throw e;
