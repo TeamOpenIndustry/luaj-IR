@@ -26,6 +26,7 @@ import java.nio.file.FileSystems;
 
 import static de.poizzy.luaj.LuaValue.*;
 
+import de.poizzy.luaj.annotations.LuaFunction;
 import de.poizzy.luaj.lib.jse.JseBaseLib;
 import de.poizzy.luaj.lib.jse.JsePlatform;
 import de.poizzy.luaj.Globals;

@@ -27,6 +27,7 @@ import java.util.*;
 
 import static de.poizzy.luaj.LuaValue.*;
 
+import de.poizzy.luaj.annotations.LuaFunction;
 import de.poizzy.luaj.lib.jse.JseOsLib;
 import de.poizzy.luaj.lib.jse.JsePlatform;
 import de.poizzy.luaj.Buffer;

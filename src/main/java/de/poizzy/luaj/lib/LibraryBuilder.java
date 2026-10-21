@@ -1,29 +1,36 @@
 package de.poizzy.luaj.lib;
 
-import de.poizzy.luaj.LuaString;
-import de.poizzy.luaj.LuaTable;
-import de.poizzy.luaj.LuaValue;
-import de.poizzy.luaj.Varargs;
+import de.poizzy.luaj.*;
+import de.poizzy.luaj.annotations.LuaField;
+import de.poizzy.luaj.annotations.LuaFunction;
 import de.poizzy.luaj.function.*;
-import de.poizzy.luaj.function.*;
+import de.poizzy.luaj.lib.jse.CoerceJavaToLua;
+import de.poizzy.luaj.lib.jse.CoerceLuaToJava;
 
 import java.lang.invoke.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class LibraryBuilder {
-
+    private static final String CONSTRUCTOR = "CONSTRUCTOR";
     private static final MethodHandles.Lookup LOOKUP = MethodHandles.lookup();
-    private static final ClassValue<Binding[]> BINDINGS = new ClassValue<Binding[]>() {
+    private static final ClassValue<FunctionBinding[]> FUNCTION_BINDINGS = new ClassValue<FunctionBinding[]>() {
         @Override
-        protected Binding[] computeValue(Class<?> type) {
+        protected FunctionBinding[] computeValue(Class<?> type) {
             try {
-                return computeClasses(type);
+                return computeFunctions(type);
             } catch (Throwable e) {
                 throw new IllegalStateException("Failed to bind Lua module " + type.getName(), e);
             }
+        }
+    };
+    private static final ClassValue<VariableBinding[]> VARIABLE_BINDINGS = new ClassValue<VariableBinding[]>() {
+        @Override
+        protected VariableBinding[] computeValue(Class<?> type) {
+            return computeVariables(type);
         }
     };
 
@@ -43,13 +50,44 @@ public class LibraryBuilder {
         }
     }
 
-    private static final class Binding {
-        public final LuaString key;
+    private static final class VariableBinding {
+        public final LuaString name;
+        public final Class<?> type;
+        public final MethodHandle getter;
+        public final MethodHandle setter;
+
+        public VariableBinding(LuaString name, Class<?> type, MethodHandle getter, MethodHandle setter) {
+            this.name = name;
+            this.type = type;
+            this.getter = getter;
+            this.setter = setter;
+        }
+
+        public LuaValue get(Object target) {
+            try {
+                return CoerceJavaToLua.coerce(getter.invokeExact(target));
+            } catch (Throwable e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        public void set(Object target, LuaValue value) {
+            if (setter == null) throw new LuaError("field '" + name + "' is read-only");
+            try {
+                setter.invokeExact(target, CoerceLuaToJava.coerce(value, type));
+            } catch (Throwable e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private static final class FunctionBinding {
+        public final String key;
         public final Kind kind;
         public final boolean isStatic;
         public final MethodHandle factory;
 
-        public Binding(LuaString key, Kind kind, boolean isStatic, MethodHandle factory) {
+        public FunctionBinding(String key, Kind kind, boolean isStatic, MethodHandle factory) {
             this.key = key;
             this.kind = kind;
             this.isStatic = isStatic;
@@ -68,22 +106,62 @@ public class LibraryBuilder {
         }
     }
 
-    private static Binding[] computeClasses(Class<?> clazz) throws Throwable {
-        Map<String, Binding> found = new LinkedHashMap<>();
+    private static FunctionBinding[] computeFunctions(Class<?> clazz) throws Throwable {
+        Map<String, FunctionBinding> found = new LinkedHashMap<>();
         for (Class<?> c = clazz; c != null && c != Object.class; c = c.getSuperclass()) {
             for (Method method : c.getDeclaredMethods()) {
                 LuaFunction tag = method.getAnnotation(LuaFunction.class);
                 if (tag == null) continue;
-
                 String name = tag.name().isEmpty() ? method.getName() : tag.name();
                 if (found.containsKey(name)) continue;
-                found.put(name, createBinding(clazz, method, name));
+                found.put(name, createFunction(clazz, method, name));
             }
         }
-        return found.values().toArray(new Binding[0]);
+        return found.values().toArray(new FunctionBinding[0]);
     }
 
-    private static Binding createBinding(Class<?> clazz, Method method, String name) throws Throwable {
+    private static VariableBinding[] computeVariables(Class<?> clazz) {
+        Map<String, VariableBinding> found = new LinkedHashMap<>();
+        for (Class<?> c = clazz; c != null && c != Object.class; c = c.getSuperclass()) {
+            for (Field field : c.getDeclaredFields()) {
+                LuaField tag = field.getAnnotation(LuaField.class);
+                if (tag == null) continue;
+
+                String name = tag.name().isEmpty() ? field.getName() : tag.name();
+                if (found.containsKey(name)) continue;
+                found.put(name, createVariable(field.getType(), field, name));
+            }
+        }
+        return found.values().toArray(new VariableBinding[0]);
+    }
+
+    private static VariableBinding createVariable(Class<?> type, Field field, String name) {
+        try {
+            field.setAccessible(true);
+            boolean isStatic = Modifier.isStatic(field.getModifiers());
+            boolean isFinal = Modifier.isFinal(field.getModifiers());
+
+            MethodHandle g = LOOKUP.unreflectGetter(field);
+            if (isStatic) {
+                g = MethodHandles.dropArguments(g, 0, Object.class);
+            }
+            MethodHandle getter = g.asType(MethodType.methodType(Object.class, Object.class));
+
+            MethodHandle setter = null;
+            if (!isFinal) {
+                MethodHandle s = LOOKUP.unreflectSetter(field);
+                if (isStatic) {
+                    s = MethodHandles.dropArguments(s, 0, Object.class);
+                }
+                setter = s.asType(MethodType.methodType(void.class, Object.class, Object.class));
+            }
+            return new VariableBinding(LuaValue.valueOf(name), type, getter, setter);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("Cannot access @LuaField " + field, e);
+        }
+    }
+
+    private static FunctionBinding createFunction(Class<?> clazz, Method method, String name) throws Throwable {
         Class<?>[] params = method.getParameterTypes();
         Kind kind;
         if (params.length == 1 && params[0] == Varargs.class) {
@@ -119,21 +197,88 @@ public class LibraryBuilder {
 
         CallSite site = LambdaMetafactory.metafactory(LOOKUP, "call", factoryType, kind.samType, impl, instantiated);
         MethodHandle factory = isStatic ? site.getTarget().asType(MethodType.methodType(Object.class)) : site.getTarget().asType(MethodType.methodType(Object.class, Object.class));
-        return new Binding(LuaValue.valueOf(name), kind, isStatic, factory);
+        return new FunctionBinding(name, kind, isStatic, factory);
+    }
+
+    private static void register(LuaValue env, String name, LuaTable table) {
+        env.set(name, table);
+        if (!env.get("package").isnil()) {
+            env.get("package").get("loaded").set(name, table);
+        }
+    }
+
+    private static void initLuaClass(Class<?> type, String name, LuaValue env, FunctionBinding[] bindings) throws Throwable {
+        Constructor<?> c = type.getDeclaredConstructor();
+        c.setAccessible(true);
+        MethodHandle ctor = LOOKUP.unreflectConstructor(c).asType(MethodType.methodType(Object.class));
+
+        VariableBinding[] variableBindings = VARIABLE_BINDINGS.get(type);
+        Map<LuaValue, VariableBinding> variables = new HashMap<>();
+        for (VariableBinding v : variableBindings) {
+            variables.put(v.name, v);
+        }
+
+        LuaTable meta = new LuaTable();
+        meta.set(LuaValue.INDEX, new TwoArgFunction((t, k) -> {
+            VariableBinding v = variables.get(k);
+            return v == null ? LuaValue.NIL : v.get(((LuaInstance) t).self);
+        }));
+        meta.set(LuaValue.NEWINDEX, new ThreeArgFunction((t, k, val) -> {
+            VariableBinding v = variables.get(k);
+            if (v == null) {
+                t.rawset(k, val);
+            } else {
+                v.set(((LuaInstance) t).self, val);
+            }
+            return LuaValue.NIL;
+        }));
+
+        LuaTable classTable = new LuaTable();
+        classTable.set("new", new VarArgFunction(args -> {
+            try {
+                Object o = (Object) ctor.invokeExact();
+                LuaClass self = (LuaClass) o;
+
+                LuaInstance instance = new LuaInstance(0, bindings.length, self);
+                for (FunctionBinding b : bindings) {
+                    instance.set(b.key, b.instantiate(self));
+                }
+
+                instance.setmetatable(meta);
+
+                self.constructor(instance, args);
+                return instance;
+            } catch (RuntimeException | Error e) {
+                throw e;
+            } catch (Throwable e) {
+                throw new LuaError(e);
+            }
+        }));
+
+        register(env, name, classTable);
     }
 
 
     public static void addModule(LuaModule module, LuaValue env) throws Throwable {
-        Binding[] bindings = BINDINGS.get(module.getClass());
+        FunctionBinding[] bindings = FUNCTION_BINDINGS.get(module.getClass());
+
+        String moduleName = module.name().isEmpty() ? module.getClass().getName() : module.name();
+
+        Class<?> moduleClass = module.getClass();
+        if (module instanceof LuaClass) {
+            initLuaClass(moduleClass, moduleName, env, bindings);
+            return;
+        }
 
         LuaTable table = new LuaTable(0, bindings.length);
+
         module.init(table, LuaValue.EMPTYSTRING, env);
 
-        for (Binding b : bindings) {
+        for (FunctionBinding b : bindings) {
             table.set(b.key, b.instantiate(module));
         }
 
-        String moduleName = module.name();
+
         if (moduleName.equals("_G")) {
             LuaValue key = LuaValue.NIL;
             while (true) {
@@ -143,11 +288,7 @@ public class LibraryBuilder {
                 env.set(key, entry.arg(2));
             }
         } else {
-            String name = moduleName.isEmpty() ? module.getClass().getName() : moduleName;
-            env.set(name, table);
-            if (!env.get("package").isnil()) {
-                env.get("package").get("loaded").set(name, table);
-            }
+            register(env, moduleName, table);
         }
     }
 }

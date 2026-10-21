@@ -146,7 +146,7 @@ public class DebugLib implements LuaModule {
      * @param env     the environment to load into, which must be a Globals
      *                instance.
      */
-    @de.poizzy.luaj.lib.LuaFunction
+    @de.poizzy.luaj.annotations.LuaFunction
     public Varargs debug(Varargs args) {
         LuaThread t = args.narg() > 0 ? args.checkthread(1) : globals.running;
         LuaThread.State s = t.state;
@@ -154,7 +154,7 @@ public class DebugLib implements LuaModule {
                 valueOf((s.hookcall ? "c" : "") + (s.hookline ? "l" : "") + (s.hookrtrn ? "r" : "")), valueOf(s.hookcount));
     }
 
-    @de.poizzy.luaj.lib.LuaFunction
+    @de.poizzy.luaj.annotations.LuaFunction
     public Varargs gethook(Varargs args) {
         LuaThread t = args.narg() > 0 ? args.checkthread(1) : globals.running;
         LuaThread.State s = t.state;
@@ -162,7 +162,7 @@ public class DebugLib implements LuaModule {
                 valueOf((s.hookcall ? "c" : "") + (s.hookline ? "l" : "") + (s.hookrtrn ? "r" : "")), valueOf(s.hookcount));
     }
 
-    @de.poizzy.luaj.lib.LuaFunction
+    @de.poizzy.luaj.annotations.LuaFunction
     public Varargs getinfo(Varargs args) {
         int a = 1;
         LuaThread thread = args.isthread(a) ? args.checkthread(a++) : globals.running;
@@ -223,7 +223,7 @@ public class DebugLib implements LuaModule {
         return info;
     }
 
-    @de.poizzy.luaj.lib.LuaFunction
+    @de.poizzy.luaj.annotations.LuaFunction
     public Varargs getlocal(Varargs args) {
         int a = 1;
         LuaThread thread = args.isthread(a) ? args.checkthread(a++) : globals.running;
@@ -240,7 +240,7 @@ public class DebugLib implements LuaModule {
         return frame.getLocal(local);
     }
 
-    @de.poizzy.luaj.lib.LuaFunction
+    @de.poizzy.luaj.annotations.LuaFunction
     public Varargs getmetatable(Varargs args) {
         LuaValue func = args.checkfunction(1);
         int up = args.checkint(2);
@@ -254,7 +254,7 @@ public class DebugLib implements LuaModule {
         return NIL;
     }
 
-    @de.poizzy.luaj.lib.LuaFunction
+    @de.poizzy.luaj.annotations.LuaFunction
     public Varargs getregistry(Varargs args) {
         LuaValue func = args.checkfunction(1);
         int up = args.checkint(2);
@@ -268,7 +268,7 @@ public class DebugLib implements LuaModule {
         return NIL;
     }
 
-    @de.poizzy.luaj.lib.LuaFunction
+    @de.poizzy.luaj.annotations.LuaFunction
     public Varargs getupvalue(Varargs args) {
         LuaValue func = args.checkfunction(1);
         int up = args.checkint(2);
@@ -282,7 +282,7 @@ public class DebugLib implements LuaModule {
         return NIL;
     }
 
-    @de.poizzy.luaj.lib.LuaFunction
+    @de.poizzy.luaj.annotations.LuaFunction
     public Varargs getuservalue(Varargs args) {
         int a = 1;
         LuaThread t = args.isthread(a) ? args.checkthread(a++) : globals.running;
@@ -311,7 +311,7 @@ public class DebugLib implements LuaModule {
         return NONE;
     }
 
-    @de.poizzy.luaj.lib.LuaFunction
+    @de.poizzy.luaj.annotations.LuaFunction
     public Varargs sethook(Varargs args) {
         int a = 1;
         LuaThread t = args.isthread(a) ? args.checkthread(a++) : globals.running;
@@ -340,7 +340,7 @@ public class DebugLib implements LuaModule {
         return NONE;
     }
 
-    @de.poizzy.luaj.lib.LuaFunction
+    @de.poizzy.luaj.annotations.LuaFunction
     public Varargs setlocal(Varargs args) {
         int a = 1;
         LuaThread thread = args.isthread(a) ? args.checkthread(a++) : globals.running;
@@ -351,7 +351,7 @@ public class DebugLib implements LuaModule {
         return f != null ? f.setLocal(local, value) : NONE;
     }
 
-    @de.poizzy.luaj.lib.LuaFunction
+    @de.poizzy.luaj.annotations.LuaFunction
     public Varargs setmetatable(Varargs args) {
         LuaValue value = args.checkvalue(3);
         int up = args.checkint(2);
@@ -367,7 +367,7 @@ public class DebugLib implements LuaModule {
         return NIL;
     }
 
-    @de.poizzy.luaj.lib.LuaFunction
+    @de.poizzy.luaj.annotations.LuaFunction
     public Varargs setupvalue(Varargs args) {
         LuaValue value = args.checkvalue(3);
         int up = args.checkint(2);
@@ -383,7 +383,7 @@ public class DebugLib implements LuaModule {
         return NIL;
     }
 
-    @de.poizzy.luaj.lib.LuaFunction
+    @de.poizzy.luaj.annotations.LuaFunction
     public Varargs setuservalue(Varargs args) {
         Object o = args.checkuserdata(1);
         LuaValue v = args.checkvalue(2);
@@ -393,7 +393,7 @@ public class DebugLib implements LuaModule {
         return NONE;
     }
 
-    @de.poizzy.luaj.lib.LuaFunction
+    @de.poizzy.luaj.annotations.LuaFunction
     public Varargs upvalueid(Varargs args) {
         int up = args.checkint(2);
         LuaValue func = args.checkfunction(1);
@@ -406,7 +406,7 @@ public class DebugLib implements LuaModule {
         return NIL;
     }
 
-    @de.poizzy.luaj.lib.LuaFunction
+    @de.poizzy.luaj.annotations.LuaFunction
     public Varargs upvaluejoin(Varargs args) {
         int n1 = args.checkint(2);
         LuaClosure f1 = args.checkclosure(1);
@@ -420,7 +420,7 @@ public class DebugLib implements LuaModule {
         return NONE;
     }
 
-    @de.poizzy.luaj.lib.LuaFunction
+    @de.poizzy.luaj.annotations.LuaFunction
     public Varargs traceback(Varargs args) {
         int a = 1;
         LuaThread thread = args.isthread(a) ? args.checkthread(a++) : globals.running;

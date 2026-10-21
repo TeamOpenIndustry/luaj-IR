@@ -37,7 +37,7 @@ import de.poizzy.luaj.LuaValue;
 import de.poizzy.luaj.Varargs;
 import de.poizzy.luaj.compiler.LuaC;
 import de.poizzy.luaj.function.LibFunction;
-import de.poizzy.luaj.lib.LuaFunction;
+import de.poizzy.luaj.annotations.LuaFunction;
 
 /**
  * Subclass of {@link LibFunction} which implements the features of the luajava

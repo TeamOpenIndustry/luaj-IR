@@ -1,4 +1,6 @@
-package de.poizzy.luaj.lib;
+package de.poizzy.luaj.annotations;
+
+import de.poizzy.luaj.LuaValue;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD})
-public @interface LuaFunction {
+@Target({ElementType.FIELD})
+public @interface LuaField {
     String name() default "";
 }

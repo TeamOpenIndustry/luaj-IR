@@ -1,5 +1,6 @@
 package de.poizzy.luaj.lib;
 
+import de.poizzy.luaj.annotations.LuaFunction;
 import org.junit.jupiter.api.Test;
 import de.poizzy.luaj.Globals;
 import de.poizzy.luaj.LuaTable;

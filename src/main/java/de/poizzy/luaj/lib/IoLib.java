@@ -27,6 +27,7 @@ import java.io.IOException;
 
 import static de.poizzy.luaj.LuaValue.*;
 
+import de.poizzy.luaj.annotations.LuaFunction;
 import de.poizzy.luaj.lib.jse.JseIoLib;
 import de.poizzy.luaj.lib.jse.JsePlatform;
 import de.poizzy.luaj.Globals;
