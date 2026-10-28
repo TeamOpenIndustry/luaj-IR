@@ -4,8 +4,8 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>de.poizy</groupId>
-	<artifactId>luaj</artifactId>
-	<version>poizzy-3.1.1</version>
+	<artifactId>luaj-ir</artifactId>
+	<version>3.1.1</version>
 
 	<packaging>jar</packaging>
 
@@ -47,6 +47,13 @@
 		<maven.compiler.target>8</maven.compiler.target>
 		<maven.compiler.source>8</maven.compiler.source>
 	</properties>
+
+	<distributionManagement>
+		<repository>
+			<id>teamopenindustry</id>
+			<url>sftp://teamopenindustry.cc:22/var/www/html/maven/</url>
+		</repository>
+	</distributionManagement>
 
 	<dependencyManagement>
 		<dependencies>
