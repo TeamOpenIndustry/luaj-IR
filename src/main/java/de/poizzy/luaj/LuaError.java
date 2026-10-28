@@ -162,4 +162,8 @@ public class LuaError extends RuntimeException {
 	@Override
 	public Throwable getCause() { return cause; }
 
+	public static LuaError unsafeException(String function) {
+		return new LuaError("attempt to call '" + function + "': disabled in this environment for security reasons");
+	}
+
 }

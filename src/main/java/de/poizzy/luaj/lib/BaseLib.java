@@ -141,15 +141,9 @@ public class BaseLib implements ResourceFinder, LuaModule {
         return NIL;
     }
 
-    // Unsafe
-    // @LuaFunction
+    @LuaFunction
     public Varargs dofile(Varargs args) {
-        args.argcheck(args.isstring(1) || args.isnil(1), 1, "filename must be string or nil");
-        String filename = args.isstring(1) ? args.tojstring(1) : null;
-        Varargs v = filename == null ? loadStream(globals.STDIN, "=stdin", "bt", globals)
-                : loadFile(args.checkjstring(1), "bt", globals);
-        if (v.isnil(1)) throw new LuaError(v.tojstring(2));
-        return v.arg1().invoke();
+        throw LuaError.unsafeException("dofile");
     }
 
     @LuaFunction
@@ -180,14 +174,9 @@ public class BaseLib implements ResourceFinder, LuaModule {
                 source, mode, env);
     }
 
-    // Unsafe
-    // @LuaFunction
+    @LuaFunction
     public Varargs loadfile(Varargs args) {
-        args.argcheck(args.isstring(1) || args.isnil(1), 1, "filename must be string or nil");
-        String filename = args.isstring(1) ? args.tojstring(1) : null;
-        String mode = args.optjstring(2, "bt");
-        LuaValue env = args.optvalue(3, globals);
-        return filename == null ? loadStream(globals.STDIN, "=stdin", mode, env) : loadFile(filename, mode, env);
+        throw LuaError.unsafeException("loadfile");
     }
 
     @LuaFunction

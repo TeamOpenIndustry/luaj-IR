@@ -27,14 +27,10 @@ import java.util.*;
 
 import static de.poizzy.luaj.LuaValue.*;
 
+import de.poizzy.luaj.*;
 import de.poizzy.luaj.annotations.LuaFunction;
 import de.poizzy.luaj.lib.jse.JseOsLib;
 import de.poizzy.luaj.lib.jse.JsePlatform;
-import de.poizzy.luaj.Buffer;
-import de.poizzy.luaj.Globals;
-import de.poizzy.luaj.LuaTable;
-import de.poizzy.luaj.LuaValue;
-import de.poizzy.luaj.Varargs;
 import de.poizzy.luaj.function.LibFunction;
 
 /**
@@ -163,53 +159,35 @@ public class OsLib implements LuaModule {
         return valueOf(difftime(args.checkdouble(1), args.checkdouble(2)));
     }
 
-    // Unsafe
-    // @LuaFunction
+
+    @LuaFunction
     public Varargs execute(Varargs args) {
-        return execute(args.optjstring(1, null));
+        throw LuaError.unsafeException("execute");
     }
 
-    // Unsafe
-    // @LuaFunction
+    @LuaFunction
     public Varargs exit(Varargs args) {
-        exit(args.optint(1, 0));
-        return NONE;
+        throw LuaError.unsafeException("exit");
     }
 
-    // Unsafe
-    // @LuaFunction
+    @LuaFunction
     public Varargs getenv(Varargs args) {
-        String v = getenv(args.checkjstring(1));
-        return v == null ? NIL : valueOf(v);
+        throw LuaError.unsafeException("getenv");
     }
 
-    // Unsafe
-    // @LuaFunction
+    @LuaFunction
     public Varargs remove(Varargs args) {
-        try {
-            remove(args.checkjstring(1));
-            return TRUE;
-        } catch (IOException e) {
-            return varargsOf(NIL, valueOf(e.getMessage()));
-        }
+        throw LuaError.unsafeException("remove");
     }
 
-    // Unsafe
-    // @LuaFunction
+    @LuaFunction
     public Varargs rename(Varargs args) {
-        try {
-            rename(args.checkjstring(1), args.checkjstring(2));
-            return TRUE;
-        } catch (IOException e) {
-            return varargsOf(NIL, valueOf(e.getMessage()));
-        }
+        throw LuaError.unsafeException("rename");
     }
 
-    // Unsafe
-    // @LuaFunction
+    @LuaFunction
     public Varargs setlocale(Varargs args) {
-        String v = setlocale(args.optjstring(1, null), args.optjstring(2, "all"));
-        return v == null ? NIL : valueOf(v);
+        throw LuaError.unsafeException("setlocale");
     }
 
     @LuaFunction
@@ -217,10 +195,9 @@ public class OsLib implements LuaModule {
         return valueOf(time(args.opttable(1, null)));
     }
 
-    // Unsafe
-    //@LuaFunction
+    @LuaFunction
     public Varargs tmpname(Varargs args) {
-        return valueOf(tmpname());
+        throw LuaError.unsafeException("tmpname");
     }
 
 
