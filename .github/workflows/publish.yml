@@ -14,6 +14,8 @@ jobs:
           server-id: teamopenindustry
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
+      - name: keyscan
+        run: mkdir -p ~/.ssh/ && ssh-keyscan -t rsa teamopenindustry.cc >> ~/.ssh/known_hosts
       - name: Deploy
         run: mvn --batch-mode deploy
         env:
